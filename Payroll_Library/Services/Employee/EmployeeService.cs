@@ -31,48 +31,36 @@ namespace Payroll_Library.Services.Employee
                     DateOfBirth = dto.DateOfBirth,
                     Age = dto.Age,
                     Gender = dto.Gender,
-                    ContactInformations = [],
-                    EmployeeBiometrics = [],
-                    EmploymentDetails = [],
+                    ContactInformations = dto.ContactInformationDtos.Select(c => new ContactInformation
+                    {
+                        Address = c.Address,
+                        Email = c.Email,
+                        PhoneNumber = c.PhoneNumber,
+                    }).ToList(),
+                    EmployeeBiometrics = dto.EmployeeBiometricDtos.Select(b => new EmployeeBiometric
+                    {
+                        BiometricData = b.BiometricData,
+                        RecordDate = DateTime.Now,
+                        RecordId = 0,
+                    }).ToList(),
+                    EmploymentDetails = dto.EmploymentDetailDtos.Select(d => new EmploymentDetail
+                    {
+                        EmploymentId = 0,
+                        HireDate = d.HireDate,
+                        IncomeTaxRate = d.IncomeTaxRate,
+                        PagibigEmployeeRate = d.PagibigEmployeeRate,
+                        PayRate = d.PayRate,
+                        
+                    }).ToList(),
                     CreatedBy = dto.CreatedBy,
                     CreatedDate = DateOnly.FromDateTime(DateTime.Now),
                     IsActive = dto.IsActive
                 };
 
-                var _contactInfo = new ContactInformation()
-                {
-                    ContactId = 0,
-                    Address = dto.ContactInformationDtos.FirstOrDefault().Address,
-                    Email = dto.ContactInformationDtos.FirstOrDefault().Email,
-                    PhoneNumber = dto.ContactInformationDtos.FirstOrDefault().PhoneNumber
-
-                };
-
-                var _employeeBio = new EmployeeBiometric()
-                {
-                    RecordId = 0,
-                    RecordDate = DateTime.Now,
-                    BiometricData = dto.EmployeeBiometricDtos.FirstOrDefault().BiometricData,
-                };
-
-                var _employmentDetails = new EmploymentDetail()
-                {
-                    EmploymentId = 0,
-                    HireDate = dto.EmploymentDetailDtos.FirstOrDefault().HireDate,
-                    PositionId = dto.EmploymentDetailDtos.FirstOrDefault().PositionId,
-                    PayRate = dto.EmploymentDetailDtos.FirstOrDefault().PayRate,
-                    IncomeTaxRate = dto.EmploymentDetailDtos.FirstOrDefault().IncomeTaxRate,
-                    PagibigEmployeeRate = dto.EmploymentDetailDtos.FirstOrDefault().PagibigEmployeeRate,
-                    PhilhealthEmployeeRate = dto.EmploymentDetailDtos.FirstOrDefault().PhilhealthEmployeeRate,
-                    SssEmployeeRate = dto.EmploymentDetailDtos.FirstOrDefault().SssEmployeeRate,
-                    Status = dto.EmploymentDetailDtos.FirstOrDefault().Status
-                };
-
-                _personalInfo.ContactInformations = (ICollection<ContactInformation>)_contactInfo;
-                _personalInfo.EmployeeBiometrics = (ICollection<EmployeeBiometric>)_employeeBio;
-                _personalInfo.EmploymentDetails = (ICollection<EmploymentDetail>)_employmentDetails;
+                
 
                 await _context.AddAsync(_personalInfo);
+                await _context.SaveChangesAsync();
                 return new ApiResponse<string>
                 {
                     Data = "Success",
