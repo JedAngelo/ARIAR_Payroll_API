@@ -1,0 +1,6 @@
+@ARIAR_Payroll_API_HostAddress = http://localhost:5292
+
+GET {{ARIAR_Payroll_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
