@@ -21,7 +21,6 @@ namespace Payroll_Library.Services.Employee
         {
             try
             {
-                // Create personal information entity
                 var _personalInfo = new PersonalInformation()
                 {
                     PersonalId = Guid.NewGuid(),
@@ -45,7 +44,7 @@ namespace Payroll_Library.Services.Employee
                         IncomeTaxRate = d.IncomeTaxRate,
                         PagibigEmployeeRate = d.PagibigEmployeeRate,
                         PayRate = d.PayRate,
-                        PositionId = d.PositionId // Attach existing PositionId here
+                        PositionId = d.PositionId 
                     }).ToList(),
                     CreatedBy = dto.CreatedBy,
                     CreatedDate = dto.CreatedDate,
@@ -53,10 +52,8 @@ namespace Payroll_Library.Services.Employee
                     IsDeleted = false,
                 };
 
-                // Add personal information entity
                 await _context.AddAsync(_personalInfo);
 
-                // Save changes (this will handle cascading inserts for EmploymentDetails)
                 await _context.SaveChangesAsync();
 
                 return new ApiResponse<string>
