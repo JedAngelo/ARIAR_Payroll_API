@@ -14,11 +14,10 @@ namespace Payroll_Library.Models.Dto
 
         public int PositionId { get; set; }
 
-        public DateOnly HireDate { get; set; }
+        public DateTime HireDate { get; set; }
 
         public decimal PayRate { get; set; }
 
-        public string Status { get; set; } = null!;
 
         public decimal PhilhealthEmployeeRate { get; set; }
 
@@ -28,8 +27,8 @@ namespace Payroll_Library.Models.Dto
 
         public decimal IncomeTaxRate { get; set; }
 
-        public virtual PersonalInformationDto PersonalDto { get; set; } = null!;
+        //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
 
-        public virtual Position PositionDtos { get; set; } = null!;
+        //public virtual PostionDto PositionDtos { get; set; } = new PostionDto();
     }
 }

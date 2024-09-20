@@ -16,6 +16,6 @@ namespace Payroll_Library.Models.Dto
 
         public DateTime RecordDate { get; set; }
 
-        public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
+        //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
     }
 }

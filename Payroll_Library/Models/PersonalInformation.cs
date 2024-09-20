@@ -13,17 +13,17 @@ public partial class PersonalInformation
 
     public string LastName { get; set; } = null!;
 
-    public DateOnly DateOfBirth { get; set; }
+    public DateTime DateOfBirth { get; set; }
 
     public string Gender { get; set; } = null!;
 
     public byte Age { get; set; }
 
-    public DateOnly CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public string CreatedBy { get; set; } = null!;
 
-    public DateOnly? ModifiedDate { get; set; }
+    public DateTime? ModifiedDate { get; set; }
 
     public string? ModifiedBy { get; set; }
 
@@ -31,7 +31,7 @@ public partial class PersonalInformation
 
     public bool IsDeleted { get; set; }
 
-    public DateOnly? DeletedDate { get; set; }
+    public DateTime? DeletedDate { get; set; }
 
     public string? DeletedBy { get; set; }
 

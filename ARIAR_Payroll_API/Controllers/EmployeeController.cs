@@ -16,12 +16,22 @@ namespace ARIAR_Payroll_API.Controllers
         {
             _employeeService = employeeService;
         }
+
+
         [HttpPost("InsertOrUpdateEmployeeInfo")]
         public async Task<ActionResult<ApiResponse<string>>> InsertOrUpdateEmployeeInfo(PersonalInformationDto dto)
         {
-            var result = await _employeeService.InsertOrUpdateEmployeeInfo(dto);
+            var result = await _employeeService.AddEmployeeInfo(dto);
             return Ok(result);
 
         }
+         [HttpPost("AddPosition")]
+        public async Task<ActionResult<ApiResponse<string>>> AddPosition(PostionDto dto)
+        {
+            var result = await _employeeService.AddPosition(dto);
+            return Ok(result);
+
+        }
+
     }
 }

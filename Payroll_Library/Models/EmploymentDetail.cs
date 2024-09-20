@@ -11,11 +11,9 @@ public partial class EmploymentDetail
 
     public int PositionId { get; set; }
 
-    public DateOnly HireDate { get; set; }
+    public DateTime HireDate { get; set; }
 
     public decimal PayRate { get; set; }
-
-    public string Status { get; set; } = null!;
 
     public decimal PhilhealthEmployeeRate { get; set; }
 

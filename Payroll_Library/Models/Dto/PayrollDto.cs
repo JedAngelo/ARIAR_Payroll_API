@@ -16,12 +16,12 @@ namespace Payroll_Library.Models.Dto
 
         public DateOnly PaymentDate { get; set; }
 
-        public virtual ICollection<GrossSalaryDto> GrossSalaryDtos { get; set; } = new List<GrossSalaryDto>();
+        public virtual List<GrossSalaryDto> GrossSalaryDtos { get; set; } = new List<GrossSalaryDto>();
 
-        public virtual ICollection<NetSalaryDto> NetSalaryDtos { get; set; } = new List<NetSalaryDto>();
+        public virtual List<NetSalaryDto> NetSalaryDtos { get; set; } = new List<NetSalaryDto>();
 
-        public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
+        //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
 
-        public virtual ICollection<TotalDeductionsDto> TotalDeductionsDto { get; set; } = new List<TotalDeductionsDto>();
+        public virtual List<TotalDeductionsDto> TotalDeductionsDto { get; set; } = new List<TotalDeductionsDto>();
     }
 }

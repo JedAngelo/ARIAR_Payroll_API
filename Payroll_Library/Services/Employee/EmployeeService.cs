@@ -17,31 +17,26 @@ namespace Payroll_Library.Services.Employee
             this._context = context;
         }
 
-        public async Task<ApiResponse<string>> InsertOrUpdateEmployeeInfo(PersonalInformationDto dto)
+        public async Task<ApiResponse<string>> AddEmployeeInfo(PersonalInformationDto dto)
         {
             try
             {
-
+                // Create personal information entity
                 var _personalInfo = new PersonalInformation()
                 {
                     PersonalId = Guid.NewGuid(),
                     FirstName = dto.FirstName,
                     MiddleName = dto.MiddleName,
                     LastName = dto.LastName,
-                    DateOfBirth = dto.DateOfBirth,
                     Age = dto.Age,
                     Gender = dto.Gender,
+                    DateOfBirth = dto.DateOfBirth,
                     ContactInformations = dto.ContactInformationDtos.Select(c => new ContactInformation
                     {
+                        ContactId = 0,
                         Address = c.Address,
                         Email = c.Email,
                         PhoneNumber = c.PhoneNumber,
-                    }).ToList(),
-                    EmployeeBiometrics = dto.EmployeeBiometricDtos.Select(b => new EmployeeBiometric
-                    {
-                        BiometricData = b.BiometricData,
-                        RecordDate = DateTime.Now,
-                        RecordId = 0,
                     }).ToList(),
                     EmploymentDetails = dto.EmploymentDetailDtos.Select(d => new EmploymentDetail
                     {
@@ -50,36 +45,71 @@ namespace Payroll_Library.Services.Employee
                         IncomeTaxRate = d.IncomeTaxRate,
                         PagibigEmployeeRate = d.PagibigEmployeeRate,
                         PayRate = d.PayRate,
-                        
+                        PositionId = d.PositionId // Attach existing PositionId here
                     }).ToList(),
                     CreatedBy = dto.CreatedBy,
-                    CreatedDate = DateOnly.FromDateTime(DateTime.Now),
-                    IsActive = dto.IsActive
+                    CreatedDate = dto.CreatedDate,
+                    IsActive = dto.IsActive,
+                    IsDeleted = false,
                 };
 
-                
-
+                // Add personal information entity
                 await _context.AddAsync(_personalInfo);
+
+                // Save changes (this will handle cascading inserts for EmploymentDetails)
                 await _context.SaveChangesAsync();
+
                 return new ApiResponse<string>
                 {
                     Data = "Success",
                     ErrorMessage = "",
                     IsSuccess = true,
                 };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<string>
+                {
+                    Data = "",
+                    ErrorMessage = $"Error: {ex.Message}  | Inner Exception: {ex.InnerException?.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<ApiResponse<string>> AddPosition(PostionDto dto)
+        {
+            try
+            {
+                var _position = new Position
+                {
+                    PositionId = 0,
+                    PositionName = dto.PositionName,
+                    CreatedBy = dto.PositionName,
+                    CreatedDate = DateTime.Now,
+                    IsDeleted = false,
 
 
+                };
+                await _context.AddAsync(_position);
+                await _context.SaveChangesAsync();
+
+                return new ApiResponse<string>
+                {
+                    Data = "Position Added",
+                    ErrorMessage = "",
+                    IsSuccess = true
+                };
             }
             catch (Exception ex)
             {
 
                 return new ApiResponse<string>
                 {
-                    Data = "",
+                    Data = "Failed adding position",
                     ErrorMessage = $"Error: {ex.Message}",
                     IsSuccess = false,
                 };
-
             }
         }
     }

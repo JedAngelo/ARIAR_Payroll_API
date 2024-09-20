@@ -4,6 +4,7 @@ namespace Payroll_Library.Services.Employee
 {
     public interface IEmployeeService
     {
-        Task<ApiResponse<string>> InsertOrUpdateEmployeeInfo(PersonalInformationDto dto);
+        Task<ApiResponse<string>> AddEmployeeInfo(PersonalInformationDto dto);
+        Task<ApiResponse<string>> AddPosition(PostionDto dto);
     }
 }

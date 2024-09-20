@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Payroll_Library.Models;
+using Payroll_Library.Services.Employee;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +11,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Added by DELTAN
+builder.Services.AddDbContext<AriarPayrollDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCon")));
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
+// Added end
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

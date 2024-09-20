@@ -46,7 +46,6 @@ public partial class AriarPayrollDbContext : DbContext
             optionsBuilder.UseSqlServer("DefaultCon");
         }
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Attendance>(entity =>
@@ -56,18 +55,10 @@ public partial class AriarPayrollDbContext : DbContext
             entity.ToTable("Attendance");
 
             entity.Property(e => e.AttendanceId).HasColumnName("attendance_id");
-            entity.Property(e => e.AfternoonIn)
-                .HasColumnType("datetime")
-                .HasColumnName("afternoon_in");
-            entity.Property(e => e.AfternoonOut)
-                .HasColumnType("datetime")
-                .HasColumnName("afternoon_out");
-            entity.Property(e => e.MorningIn)
-                .HasColumnType("datetime")
-                .HasColumnName("morning_in");
-            entity.Property(e => e.MorningOut)
-                .HasColumnType("datetime")
-                .HasColumnName("morning_out");
+            entity.Property(e => e.AfternoonIn).HasColumnName("afternoon_in");
+            entity.Property(e => e.AfternoonOut).HasColumnName("afternoon_out");
+            entity.Property(e => e.MorningIn).HasColumnName("morning_in");
+            entity.Property(e => e.MorningOut).HasColumnName("morning_out");
             entity.Property(e => e.PersonalId).HasColumnName("personal_id");
 
             entity.HasOne(d => d.Personal).WithMany(p => p.Attendances)
@@ -134,9 +125,7 @@ public partial class AriarPayrollDbContext : DbContext
             entity.Property(e => e.RecordId).HasColumnName("record_id");
             entity.Property(e => e.BiometricData).HasColumnName("biometric_data");
             entity.Property(e => e.PersonalId).HasColumnName("personal_id");
-            entity.Property(e => e.RecordDate)
-                .HasColumnType("datetime")
-                .HasColumnName("record_date");
+            entity.Property(e => e.RecordDate).HasColumnName("record_date");
 
             entity.HasOne(d => d.Personal).WithMany(p => p.EmployeeBiometrics)
                 .HasForeignKey(d => d.PersonalId)
@@ -169,10 +158,6 @@ public partial class AriarPayrollDbContext : DbContext
             entity.Property(e => e.SssEmployeeRate)
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("sss_employee_rate");
-            entity.Property(e => e.Status)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("status");
 
             entity.HasOne(d => d.Personal).WithMany(p => p.EmploymentDetails)
                 .HasForeignKey(d => d.PersonalId)
@@ -194,7 +179,7 @@ public partial class AriarPayrollDbContext : DbContext
             entity.Property(e => e.SalaryId).HasColumnName("salary_id");
             entity.Property(e => e.GrossSalaryAmount)
                 .HasColumnType("decimal(10, 2)")
-                .HasColumnName("gross_salary");
+                .HasColumnName("gross_salary_amount");
             entity.Property(e => e.PayrollId).HasColumnName("payroll_id");
 
             entity.HasOne(d => d.Payroll).WithMany(p => p.GrossSalaries)
@@ -229,7 +214,7 @@ public partial class AriarPayrollDbContext : DbContext
             entity.Property(e => e.NetSalaryId).HasColumnName("net_salary_id");
             entity.Property(e => e.NetSalaryAmount)
                 .HasColumnType("decimal(10, 2)")
-                .HasColumnName("net_salary");
+                .HasColumnName("net_salary_amount");
             entity.Property(e => e.PayrollId).HasColumnName("payroll_id");
 
             entity.HasOne(d => d.Payroll).WithMany(p => p.NetSalaries)
@@ -271,17 +256,13 @@ public partial class AriarPayrollDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("created_by");
-            entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnName("created_date");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
             entity.Property(e => e.DateOfBirth).HasColumnName("date_of_birth");
             entity.Property(e => e.DeletedBy)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("deleted_by");
-            entity.Property(e => e.DeletedDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnName("deleted_date");
+            entity.Property(e => e.DeletedDate).HasColumnName("deleted_date");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -304,9 +285,7 @@ public partial class AriarPayrollDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("modified_by");
-            entity.Property(e => e.ModifiedDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnName("modified_date");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
         });
 
         modelBuilder.Entity<Position>(entity =>
@@ -320,22 +299,20 @@ public partial class AriarPayrollDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("created_by");
-            entity.Property(e => e.CreatedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("created_date");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
             entity.Property(e => e.DeletedBy)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("deleted_by");
-            entity.Property(e => e.DeletedDate).HasColumnName("deleted_date");
+            entity.Property(e => e.DeletedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("deleted_date");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.ModifiedBy)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("modified_by");
-            entity.Property(e => e.ModifiedDate)
-                .HasColumnType("datetime")
-                .HasColumnName("modified_date");
+            entity.Property(e => e.ModifiedDate).HasColumnName("modified_date");
             entity.Property(e => e.PositionName)
                 .HasMaxLength(100)
                 .IsUnicode(false)

@@ -18,6 +18,6 @@ namespace Payroll_Library.Models.Dto
 
         public string Email { get; set; } = null!;
 
-        public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
+        //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
     }
 }

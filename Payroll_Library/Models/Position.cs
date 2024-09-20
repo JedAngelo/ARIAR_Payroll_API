@@ -21,7 +21,7 @@ public partial class Position
 
     public string? DeletedBy { get; set; }
 
-    public DateOnly? DeletedDate { get; set; }
+    public DateTime? DeletedDate { get; set; }
 
     public virtual ICollection<EmploymentDetail> EmploymentDetails { get; set; } = new List<EmploymentDetail>();
 }

@@ -24,8 +24,8 @@ namespace Payroll_Library.Models.Dto
 
         public string? DeletedBy { get; set; }
 
-        public DateOnly? DeletedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
 
-        public virtual ICollection<EmploymentDetail> EmploymentDetails { get; set; } = new List<EmploymentDetail>();
+        public virtual List<EmploymentDetail> EmploymentDetails { get; set; } = new List<EmploymentDetail>();
     }
 }

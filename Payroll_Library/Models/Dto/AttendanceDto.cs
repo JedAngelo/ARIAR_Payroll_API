@@ -20,6 +20,6 @@ namespace Payroll_Library.Models.Dto
 
         public DateTime AfternoonOut { get; set; }
 
-        public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
+        //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
     }
 }
