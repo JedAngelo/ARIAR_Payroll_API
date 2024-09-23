@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payroll_Library.Models.Dto
-{
+namespace Payroll_Library.Models.Dto.PayrollDto { 
     public class GrossSalaryDto
     {
         public int SalaryId { get; set; }

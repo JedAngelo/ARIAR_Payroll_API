@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payroll_Library.Models.Dto
+namespace Payroll_Library.Models.Dto.AttendanceDto
 {
     public class AttendanceDto
     {

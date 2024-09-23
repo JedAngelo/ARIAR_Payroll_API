@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payroll_Library.Models.Dto
+namespace Payroll_Library.Models.Dto.EmployeeDto
 {
     public class PostionDto
     {
@@ -26,6 +26,6 @@ namespace Payroll_Library.Models.Dto
 
         public DateTime? DeletedDate { get; set; }
 
-        public virtual List<EmploymentDetail> EmploymentDetails { get; set; } = new List<EmploymentDetail>();
+        //public virtual List<EmploymentDetail> EmploymentDetails { get; set; } = new List<EmploymentDetail>();
     }
 }

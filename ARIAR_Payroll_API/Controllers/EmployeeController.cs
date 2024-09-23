@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Payroll_Library.Models.Dto;
+using Payroll_Library.Models.Dto.EmployeeDto;
 using Payroll_Library.Services;
 using Payroll_Library.Services.Employee;
 
@@ -18,20 +19,27 @@ namespace ARIAR_Payroll_API.Controllers
         }
 
 
-        [HttpPost("InsertOrUpdateEmployeeInfo")]
-        public async Task<ActionResult<ApiResponse<string>>> InsertOrUpdateEmployeeInfo(PersonalInformationDto dto)
+        [HttpPost("AddOrUpdateEmployeeInfo")]
+        public async Task<ActionResult<ApiResponse<string>>> AddOrUpdateEmployeeInfo(PersonalInformationDto dto)
         {
-            var result = await _employeeService.AddEmployeeInfo(dto);
+            var result = await _employeeService.AddOrUpdateEmployeeInfo(dto);
             return Ok(result);
 
         }
-         [HttpPost("AddPosition")]
+        [HttpPost("AddPosition")]
         public async Task<ActionResult<ApiResponse<string>>> AddPosition(PostionDto dto)
         {
             var result = await _employeeService.AddPosition(dto);
             return Ok(result);
 
         }
+        [HttpDelete("DeleteEmployee")]
+        public async Task<ActionResult<ApiResponse<string>>> DeleteEmployee(DeleteEmployeeDto dto)
+        {
+            var result = await _employeeService.DeleteEmployee(dto);
+            return Ok(result);
+        }
+
 
     }
 }

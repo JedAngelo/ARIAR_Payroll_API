@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payroll_Library.Models.Dto
+namespace Payroll_Library.Models.Dto.EmployeeDto
 {
     public class PersonalInformationDto
     {
-        public Guid PersonalId { get; set; }
+        public Guid? PersonalId { get; set; }
 
         public string FirstName { get; set; } = null!;
 
@@ -31,7 +31,9 @@ namespace Payroll_Library.Models.Dto
         public bool IsActive { get; set; }
 
 
+        public DateTime? ModifiedDate { get; set; }
 
+        public string? ModifiedBy { get; set; }
 
 
         public virtual List<ContactInformationDto> ContactInformationDtos { get; set; } = new List<ContactInformationDto>();

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Payroll_Library.Models.Dto.EmployeeDto;
 
-namespace Payroll_Library.Models.Dto
+namespace Payroll_Library.Models.Dto.AttendanceDto
 {
     public class LeaveDto
     {
