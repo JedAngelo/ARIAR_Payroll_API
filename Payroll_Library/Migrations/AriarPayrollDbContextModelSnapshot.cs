@@ -31,19 +31,19 @@ namespace Payroll_Library.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttendanceId"));
 
-                    b.Property<DateTime>("AfternoonIn")
+                    b.Property<DateTime?>("AfternoonIn")
                         .HasColumnType("datetime2")
                         .HasColumnName("afternoon_in");
 
-                    b.Property<DateTime>("AfternoonOut")
+                    b.Property<DateTime?>("AfternoonOut")
                         .HasColumnType("datetime2")
                         .HasColumnName("afternoon_out");
 
-                    b.Property<DateTime>("MorningIn")
+                    b.Property<DateTime?>("MorningIn")
                         .HasColumnType("datetime2")
                         .HasColumnName("morning_in");
 
-                    b.Property<DateTime>("MorningOut")
+                    b.Property<DateTime?>("MorningOut")
                         .HasColumnType("datetime2")
                         .HasColumnName("morning_out");
 

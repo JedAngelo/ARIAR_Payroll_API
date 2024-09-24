@@ -12,8 +12,8 @@ using Payroll_Library.Models;
 namespace Payroll_Library.Migrations
 {
     [DbContext(typeof(AriarPayrollDbContext))]
-    [Migration("20240919141030_test")]
-    partial class test
+    [Migration("20240924054925_Change attendance data to be nullable")]
+    partial class Changeattendancedatatobenullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,20 +34,20 @@ namespace Payroll_Library.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttendanceId"));
 
-                    b.Property<DateTime>("AfternoonIn")
-                        .HasColumnType("datetime")
+                    b.Property<DateTime?>("AfternoonIn")
+                        .HasColumnType("datetime2")
                         .HasColumnName("afternoon_in");
 
-                    b.Property<DateTime>("AfternoonOut")
-                        .HasColumnType("datetime")
+                    b.Property<DateTime?>("AfternoonOut")
+                        .HasColumnType("datetime2")
                         .HasColumnName("afternoon_out");
 
-                    b.Property<DateTime>("MorningIn")
-                        .HasColumnType("datetime")
+                    b.Property<DateTime?>("MorningIn")
+                        .HasColumnType("datetime2")
                         .HasColumnName("morning_in");
 
-                    b.Property<DateTime>("MorningOut")
-                        .HasColumnType("datetime")
+                    b.Property<DateTime?>("MorningOut")
+                        .HasColumnType("datetime2")
                         .HasColumnName("morning_out");
 
                     b.Property<Guid>("PersonalId")
@@ -159,7 +159,7 @@ namespace Payroll_Library.Migrations
                         .HasColumnName("personal_id");
 
                     b.Property<DateTime>("RecordDate")
-                        .HasColumnType("datetime")
+                        .HasColumnType("datetime2")
                         .HasColumnName("record_date");
 
                     b.HasKey("RecordId")
@@ -179,8 +179,8 @@ namespace Payroll_Library.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmploymentId"));
 
-                    b.Property<DateOnly>("HireDate")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("HireDate")
+                        .HasColumnType("datetime2")
                         .HasColumnName("hire_date");
 
                     b.Property<decimal>("IncomeTaxRate")
@@ -211,13 +211,6 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("decimal(5, 2)")
                         .HasColumnName("sss_employee_rate");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("status");
-
                     b.HasKey("EmploymentId")
                         .HasName("PK__Employme__63C1606468BACA47");
 
@@ -239,7 +232,7 @@ namespace Payroll_Library.Migrations
 
                     b.Property<decimal>("GrossSalaryAmount")
                         .HasColumnType("decimal(10, 2)")
-                        .HasColumnName("gross_salary");
+                        .HasColumnName("gross_salary_amount");
 
                     b.Property<Guid>("PayrollId")
                         .HasColumnType("uniqueidentifier")
@@ -293,7 +286,7 @@ namespace Payroll_Library.Migrations
 
                     b.Property<decimal>("NetSalaryAmount")
                         .HasColumnType("decimal(10, 2)")
-                        .HasColumnName("net_salary");
+                        .HasColumnName("net_salary_amount");
 
                     b.Property<Guid>("PayrollId")
                         .HasColumnType("uniqueidentifier")
@@ -349,14 +342,12 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("created_by");
 
-                    b.Property<DateOnly>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasColumnName("created_date")
-                        .HasDefaultValueSql("(getdate())");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_date");
 
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2")
                         .HasColumnName("date_of_birth");
 
                     b.Property<string>("DeletedBy")
@@ -365,11 +356,9 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("deleted_by");
 
-                    b.Property<DateOnly?>("DeletedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasColumnName("deleted_date")
-                        .HasDefaultValueSql("(getdate())");
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("deleted_date");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -412,11 +401,9 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("modified_by");
 
-                    b.Property<DateOnly?>("ModifiedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasColumnName("modified_date")
-                        .HasDefaultValueSql("(getdate())");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("modified_date");
 
                     b.HasKey("PersonalId");
 
@@ -440,7 +427,7 @@ namespace Payroll_Library.Migrations
                         .HasColumnName("created_by");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_date");
 
                     b.Property<string>("DeletedBy")
@@ -449,8 +436,8 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("deleted_by");
 
-                    b.Property<DateOnly?>("DeletedDate")
-                        .HasColumnType("date")
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime")
                         .HasColumnName("deleted_date");
 
                     b.Property<bool>("IsDeleted")
@@ -464,7 +451,7 @@ namespace Payroll_Library.Migrations
                         .HasColumnName("modified_by");
 
                     b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime")
+                        .HasColumnType("datetime2")
                         .HasColumnName("modified_date");
 
                     b.Property<string>("PositionName")

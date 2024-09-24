@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Payroll_Library.Models;
+using Payroll_Library.Services.AttendanceServ;
 using Payroll_Library.Services.Employee;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 //Added by DELTAN
 builder.Services.AddDbContext<AriarPayrollDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCon")));
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 // Added end
 

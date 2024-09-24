@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Payroll_Library.Migrations
 {
     /// <inheritdoc />
-    public partial class test : Migration
+    public partial class Changeattendancedatatobenullable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,16 +35,16 @@ namespace Payroll_Library.Migrations
                     first_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     middle_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     last_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    date_of_birth = table.Column<DateOnly>(type: "date", nullable: false),
+                    date_of_birth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     gender = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
                     age = table.Column<byte>(type: "tinyint", nullable: false),
-                    created_date = table.Column<DateOnly>(type: "date", nullable: false, defaultValueSql: "(getdate())"),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    modified_date = table.Column<DateOnly>(type: "date", nullable: true, defaultValueSql: "(getdate())"),
+                    modified_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     modified_by = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     is_deleted = table.Column<bool>(type: "bit", nullable: false),
-                    deleted_date = table.Column<DateOnly>(type: "date", nullable: true, defaultValueSql: "(getdate())"),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true)
                 },
                 constraints: table =>
@@ -60,12 +60,12 @@ namespace Payroll_Library.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     position_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     created_by = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    created_date = table.Column<DateTime>(type: "datetime", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_by = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
-                    modified_date = table.Column<DateTime>(type: "datetime", nullable: true),
+                    modified_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     is_deleted = table.Column<bool>(type: "bit", nullable: false),
                     deleted_by = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
-                    deleted_date = table.Column<DateOnly>(type: "date", nullable: true)
+                    deleted_date = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -79,10 +79,10 @@ namespace Payroll_Library.Migrations
                     attendance_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     personal_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    morning_in = table.Column<DateTime>(type: "datetime", nullable: false),
-                    morning_out = table.Column<DateTime>(type: "datetime", nullable: false),
-                    afternoon_in = table.Column<DateTime>(type: "datetime", nullable: false),
-                    afternoon_out = table.Column<DateTime>(type: "datetime", nullable: false)
+                    morning_in = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    morning_out = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    afternoon_in = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    afternoon_out = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -123,7 +123,7 @@ namespace Payroll_Library.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     personal_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     biometric_data = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    record_date = table.Column<DateTime>(type: "datetime", nullable: false)
+                    record_date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -182,9 +182,8 @@ namespace Payroll_Library.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     personal_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     position_id = table.Column<int>(type: "int", nullable: false),
-                    hire_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    hire_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     pay_rate = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    status = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     philhealth_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
                     sss_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
                     pagibig_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
@@ -212,7 +211,7 @@ namespace Payroll_Library.Migrations
                     salary_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     payroll_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    gross_salary = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                    gross_salary_amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -231,7 +230,7 @@ namespace Payroll_Library.Migrations
                     net_salary_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     payroll_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    net_salary = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                    net_salary_amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
