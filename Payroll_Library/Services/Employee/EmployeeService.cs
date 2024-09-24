@@ -16,7 +16,7 @@ namespace Payroll_Library.Services.Employee
 
         public EmployeeService(AriarPayrollDbContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         public async Task<ApiResponse<string>> AddOrUpdateEmployeeInfo(PersonalInformationDto dto)
@@ -80,9 +80,9 @@ namespace Payroll_Library.Services.Employee
                 else
                 {
                     var _existingPersonalInfo = await _context.PersonalInformations
-                    .Include(pi => pi.ContactInformations)
-                    .Include(pi => pi.EmploymentDetails)
-                    .FirstOrDefaultAsync(pi => pi.PersonalId == dto.PersonalId);
+                        .Include(pi => pi.ContactInformations)
+                        .Include(pi => pi.EmploymentDetails)
+                        .FirstOrDefaultAsync(pi => pi.PersonalId == dto.PersonalId);
 
                     if (_existingPersonalInfo == null)
                     {
@@ -120,7 +120,7 @@ namespace Payroll_Library.Services.Employee
                     // Update existing contact information
                     foreach (var existingContact in _existingPersonalInfo.ContactInformations)
                     {
-                        var newContact = dto.ContactInformationDtos.FirstOrDefault(c => c.Email == existingContact.Email); // Assuming Email is unique
+                        var newContact = dto.ContactInformationDtos.FirstOrDefault(c => c.ContactId == existingContact.ContactId); // Assuming Email is unique
                         if (newContact != null)
                         {
                             existingContact.Address = newContact.Address;
@@ -131,7 +131,7 @@ namespace Payroll_Library.Services.Employee
                     // Update existing employment details
                     foreach (var existingEmployment in _existingPersonalInfo.EmploymentDetails)
                     {
-                        var newEmployment = dto.EmploymentDetailDtos.FirstOrDefault(d => d.PositionId == _existingPersonalInfo.EmploymentDetails.PositionId); // Assuming PositionId is unique
+                        var newEmployment = dto.EmploymentDetailDtos.FirstOrDefault(d => d.EmploymentId == existingEmployment.EmploymentId); // Assuming PositionId is unique
                         if (newEmployment != null)
                         {
                             existingEmployment.HireDate = newEmployment.HireDate;
