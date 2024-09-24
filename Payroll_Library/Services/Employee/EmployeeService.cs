@@ -80,9 +80,9 @@ namespace Payroll_Library.Services.Employee
                 else
                 {
                     var _existingPersonalInfo = await _context.PersonalInformations
-                        
-                        .FirstOrDefaultAsync(pi => pi.PersonalId == dto.PersonalId);
-
+                    .Include(pi => pi.ContactInformations)
+                    .Include(pi => pi.EmploymentDetails)
+                    .FirstOrDefaultAsync(pi => pi.PersonalId == dto.PersonalId);
 
                     if (_existingPersonalInfo == null)
                     {
@@ -105,32 +105,42 @@ namespace Payroll_Library.Services.Employee
                         };
                     }
 
+                    // Update personal info fields
                     _existingPersonalInfo.FirstName = dto.FirstName;
                     _existingPersonalInfo.MiddleName = dto.MiddleName;
                     _existingPersonalInfo.LastName = dto.LastName;
                     _existingPersonalInfo.Age = dto.Age;
                     _existingPersonalInfo.Gender = dto.Gender;
                     _existingPersonalInfo.DateOfBirth = dto.DateOfBirth;
-                    _existingPersonalInfo.ModifiedBy = dto.ModifiedBy; 
-                    _existingPersonalInfo.ModifiedDate = dto.ModifiedDate; 
+                    _existingPersonalInfo.ModifiedBy = dto.ModifiedBy;
+                    _existingPersonalInfo.ModifiedDate = dto.ModifiedDate;
                     _existingPersonalInfo.IsActive = dto.IsActive;
                     _existingPersonalInfo.IsDeleted = false;
 
-                    _existingPersonalInfo.ContactInformations = dto.ContactInformationDtos.Select(c => new ContactInformation
+                    // Update existing contact information
+                    foreach (var existingContact in _existingPersonalInfo.ContactInformations)
                     {
-                        Address = c.Address,
-                        Email = c.Email,
-                        PhoneNumber = c.PhoneNumber,
-                    }).ToList();
+                        var newContact = dto.ContactInformationDtos.FirstOrDefault(c => c.Email == existingContact.Email); // Assuming Email is unique
+                        if (newContact != null)
+                        {
+                            existingContact.Address = newContact.Address;
+                            existingContact.PhoneNumber = newContact.PhoneNumber;
+                        }
+                    }
 
-                    _existingPersonalInfo.EmploymentDetails = dto.EmploymentDetailDtos.Select(d => new EmploymentDetail
+                    // Update existing employment details
+                    foreach (var existingEmployment in _existingPersonalInfo.EmploymentDetails)
                     {
-                        HireDate = d.HireDate,
-                        IncomeTaxRate = d.IncomeTaxRate,
-                        PagibigEmployeeRate = d.PagibigEmployeeRate,
-                        PayRate = d.PayRate,
-                        PositionId = d.PositionId
-                    }).ToList();
+                        var newEmployment = dto.EmploymentDetailDtos.FirstOrDefault(d => d.PositionId == _existingPersonalInfo.EmploymentDetails.PositionId); // Assuming PositionId is unique
+                        if (newEmployment != null)
+                        {
+                            existingEmployment.HireDate = newEmployment.HireDate;
+                            existingEmployment.IncomeTaxRate = newEmployment.IncomeTaxRate;
+                            existingEmployment.PagibigEmployeeRate = newEmployment.PagibigEmployeeRate;
+                            existingEmployment.PayRate = newEmployment.PayRate;
+                            // Additional updates as necessary
+                        }
+                    }
 
                     _context.PersonalInformations.Update(_existingPersonalInfo);
                     await _context.SaveChangesAsync();
@@ -141,6 +151,7 @@ namespace Payroll_Library.Services.Employee
                         ErrorMessage = "",
                         IsSuccess = true,
                     };
+
                 }
             }
             catch (Exception ex)
