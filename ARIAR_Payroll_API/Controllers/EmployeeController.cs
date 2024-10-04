@@ -40,6 +40,15 @@ namespace ARIAR_Payroll_API.Controllers
             return Ok(result);
         }
 
+         [HttpGet("DisplayPersonalInfo")]
+        public async Task<ActionResult<ApiResponse<List<PersonalInformationDisplayDto>>>> DisplayPersonalInfo()
+        {
+            var result = await _employeeService.DisplayPersonalInfo();
+            return Ok(result);
+        }
+
+
+
 
     }
 }

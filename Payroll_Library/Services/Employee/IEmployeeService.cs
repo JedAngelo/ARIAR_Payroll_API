@@ -8,5 +8,6 @@ namespace Payroll_Library.Services.Employee
         Task<ApiResponse<string>> AddOrUpdateEmployeeInfo(PersonalInformationDto dto);
         Task<ApiResponse<string>> AddPosition(PostionDto dto);
         Task<ApiResponse<string>> DeleteEmployee(DeleteEmployeeDto dto);
+        Task<ApiResponse<List<PersonalInformationDisplayDto>>> DisplayPersonalInfo();
     }
 }

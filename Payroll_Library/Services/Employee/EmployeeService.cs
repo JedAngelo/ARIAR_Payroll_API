@@ -247,5 +247,42 @@ namespace Payroll_Library.Services.Employee
             }
         }
 
+        public async Task<ApiResponse<List<PersonalInformationDisplayDto>>> DisplayPersonalInfo()
+        {
+            try
+            {
+                var _personalInfo = _context.PersonalInformations.Select(x => new PersonalInformationDisplayDto
+                {
+                    PersonalId = x.PersonalId,
+                    FirstName = x.FirstName,
+                    MiddleName = x.MiddleName,
+                    LastName = x.LastName,
+                    Age = x.Age,
+                    DateOfBirth = x.DateOfBirth,
+                    Gender = x.Gender
+
+                }).ToList();
+
+                return new ApiResponse<List<PersonalInformationDisplayDto>>
+                {
+                    Data = _personalInfo,
+                    ErrorMessage = "",
+                    IsSuccess = true
+                };
+
+
+            }
+            catch (Exception ex)
+            {
+
+                return new ApiResponse<List<PersonalInformationDisplayDto>>
+                {
+                    Data = [],
+                    ErrorMessage = $"Error: {ex.Message}",
+                    IsSuccess= false
+                };
+            }
+        }
+
     }
 }
