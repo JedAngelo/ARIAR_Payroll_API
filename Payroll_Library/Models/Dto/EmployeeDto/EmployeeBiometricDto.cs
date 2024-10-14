@@ -8,9 +8,9 @@ namespace Payroll_Library.Models.Dto.EmployeeDto
 {
     public class EmployeeBiometricDto
     {
-        public int RecordId { get; set; }
+        public int? RecordId { get; set; }
 
-        public Guid PersonalId { get; set; }
+        public Guid? PersonalId { get; set; }
 
         public byte[] BiometricData { get; set; } = null!;
 

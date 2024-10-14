@@ -23,6 +23,7 @@ builder.Services.AddDbContext<AriarPayrollDbContext>(option => option.UseSqlServ
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddScoped<IBiomentricService, BiomentricService>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCon")));
