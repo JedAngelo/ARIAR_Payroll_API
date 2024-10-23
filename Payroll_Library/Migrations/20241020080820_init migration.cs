@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Payroll_Library.Migrations
 {
     /// <inheritdoc />
-    public partial class Changeattendancedatatobenullable : Migration
+    public partial class initmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ namespace Payroll_Library.Migrations
                     first_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     middle_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     last_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
-                    date_of_birth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    date_of_birth = table.Column<DateOnly>(type: "date", nullable: false),
                     gender = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
                     age = table.Column<byte>(type: "tinyint", nullable: false),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -79,10 +79,11 @@ namespace Payroll_Library.Migrations
                     attendance_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     personal_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    morning_in = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    morning_out = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    afternoon_in = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    afternoon_out = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    morning_in = table.Column<TimeOnly>(type: "time", nullable: true),
+                    morning_out = table.Column<TimeOnly>(type: "time", nullable: true),
+                    afternoon_in = table.Column<TimeOnly>(type: "time", nullable: true),
+                    afternoon_out = table.Column<TimeOnly>(type: "time", nullable: true),
+                    attendance_date = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {

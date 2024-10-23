@@ -5,6 +5,8 @@ namespace Payroll_Library.Services.AttendanceServ
 {
     public interface IAttendanceService
     {
-        Task<ApiResponse<string>> AddAttendance(AttendanceDto dto);
+        Task<ApiResponse<string>> LogAttendance(AttendanceDto dto);
+        Task<ApiResponse<bool>> HasMorningIn(AttendanceDto dto);
+        Task<ApiResponse<List<AttendanceDisplayDto>>> GetAllAttendanceShort(DateOnly date);
     }
 }

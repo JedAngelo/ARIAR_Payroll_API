@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class Leave
 {
+    [Key]
     public int LeaveId { get; set; }
 
     public Guid PersonalId { get; set; }

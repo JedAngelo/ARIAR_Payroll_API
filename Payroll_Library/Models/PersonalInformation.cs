@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class PersonalInformation
 {
+    [Key]
     public Guid PersonalId { get; set; }
 
     public string FirstName { get; set; } = null!;
@@ -13,7 +15,7 @@ public partial class PersonalInformation
 
     public string LastName { get; set; } = null!;
 
-    public DateTime DateOfBirth { get; set; }
+    public DateOnly DateOfBirth { get; set; }
 
     public string Gender { get; set; } = null!;
 
@@ -37,11 +39,11 @@ public partial class PersonalInformation
 
     public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
 
-    public virtual ICollection<ContactInformation> ContactInformations { get; set; } = new List<ContactInformation>();
+    public virtual ContactInformation ContactInformations { get; set; } = new ContactInformation();
 
     public virtual ICollection<EmployeeBiometric> EmployeeBiometrics { get; set; } = new List<EmployeeBiometric>();
 
-    public virtual ICollection<EmploymentDetail> EmploymentDetails { get; set; } = new List<EmploymentDetail>();
+    public virtual EmploymentDetail EmploymentDetails { get; set; } = new EmploymentDetail();
 
     public virtual ICollection<Leave> Leaves { get; set; } = new List<Leave>();
 

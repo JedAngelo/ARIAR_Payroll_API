@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class EmploymentDetail
 {
+    [Key]
     public int EmploymentId { get; set; }
 
     public Guid PersonalId { get; set; }
 
     public int PositionId { get; set; }
 
-    public DateTime HireDate { get; set; }
+    public DateOnly HireDate { get; set; }
 
     public decimal PayRate { get; set; }
 
@@ -23,7 +25,7 @@ public partial class EmploymentDetail
 
     public decimal IncomeTaxRate { get; set; }
 
-    public virtual PersonalInformation Personal { get; set; } = null!;
+    public virtual PersonalInformation Personnel { get; set; } = null!;
 
     public virtual Position Position { get; set; } = null!;
 }

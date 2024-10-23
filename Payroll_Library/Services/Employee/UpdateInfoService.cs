@@ -37,13 +37,21 @@ namespace Payroll_Library.Services.Employee
                     };
                 }
 
-                _existingPersonalInfo.ContactInformations = dto.ContactInformationDtos.Select(c => new ContactInformation
+                //_existingPersonalInfo.ContactInformations = dto.ContactInformationDtos.Select(c => new ContactInformation
+                //{
+                //    ContactId = c.ContactId,
+                //    Address = c.Address,
+                //    Email = c.Email,
+                //    PhoneNumber = c.PhoneNumber,
+                //}).ToList();
+                var _contact = dto.ContactInformationDtos;
+                _existingPersonalInfo.ContactInformations = new ContactInformation
                 {
-                    ContactId = c.ContactId,
-                    Address = c.Address,
-                    Email = c.Email,
-                    PhoneNumber = c.PhoneNumber,
-                }).ToList();
+                    ContactId = _contact.ContactId,
+                    Address = _contact.Address,
+                    Email = _contact.Email,
+                    PhoneNumber = _contact.PhoneNumber
+                };
 
                 _existingPersonalInfo.ModifiedBy = dto.ModifiedBy;
                 _existingPersonalInfo.ModifiedDate = DateTime.Now;
@@ -91,15 +99,16 @@ namespace Payroll_Library.Services.Employee
                     };
                 }
 
-                _existingPersonalInfo.EmploymentDetails = dto.EmploymentDetailDtos.Select(d => new EmploymentDetail
+                var _employmentDetails = dto.EmploymentDetailDtos;
+                _existingPersonalInfo.EmploymentDetails = new EmploymentDetail
                 {
-                    EmploymentId = d.EmploymentId,
-                    HireDate = d.HireDate,
-                    IncomeTaxRate = d.IncomeTaxRate,
-                    PagibigEmployeeRate = d.PagibigEmployeeRate,
-                    PayRate = d.PayRate,
-                    PositionId = d.PositionId
-                }).ToList();
+                    EmploymentId = _employmentDetails.EmploymentId,
+                    HireDate = _employmentDetails.HireDate,
+                    IncomeTaxRate = _employmentDetails.IncomeTaxRate,
+                    PagibigEmployeeRate = _employmentDetails.PagibigEmployeeRate,
+                    PayRate = _employmentDetails.PayRate,
+                    PositionId = _employmentDetails.PositionId
+                };
 
                 _context.Update(_existingPersonalInfo);
                 await _context.SaveChangesAsync();

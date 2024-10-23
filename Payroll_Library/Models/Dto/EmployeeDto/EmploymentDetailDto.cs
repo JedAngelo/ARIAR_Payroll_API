@@ -14,7 +14,7 @@ namespace Payroll_Library.Models.Dto.EmployeeDto
 
         public int PositionId { get; set; }
 
-        public DateTime HireDate { get; set; }
+        public DateOnly HireDate { get; set; }
 
         public decimal PayRate { get; set; }
 

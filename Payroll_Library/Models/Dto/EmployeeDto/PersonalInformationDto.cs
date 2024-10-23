@@ -16,7 +16,7 @@ namespace Payroll_Library.Models.Dto.EmployeeDto
 
         public string LastName { get; set; } = null!;
 
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         public string Gender { get; set; } = null!;
 
@@ -36,11 +36,11 @@ namespace Payroll_Library.Models.Dto.EmployeeDto
         public string? ModifiedBy { get; set; }
 
 
-        public virtual List<ContactInformationDto> ContactInformationDtos { get; set; } = new List<ContactInformationDto>();
+        public virtual ContactInformationDto ContactInformationDtos { get; set; } = new ContactInformationDto();
 
         //public virtual List<EmployeeBiometricDto> EmployeeBiometricDtos { get; set; } = new List<EmployeeBiometricDto>();
 
-        public virtual List<EmploymentDetailDto> EmploymentDetailDtos { get; set; } = new List<EmploymentDetailDto>();
+        public virtual EmploymentDetailDto EmploymentDetailDtos { get; set; } = new EmploymentDetailDto();
 
 
     }

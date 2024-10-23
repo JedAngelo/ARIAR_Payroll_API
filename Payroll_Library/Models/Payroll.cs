@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class Payroll
 {
+    [Key]
     public Guid PayrollId { get; set; }
 
     public Guid PersonalId { get; set; }
@@ -12,12 +14,11 @@ public partial class Payroll
     public decimal TotalWorkDay { get; set; }
 
     public DateOnly PaymentDate { get; set; }
+    public virtual PersonalInformation Personnel { get; set; } = null!;
 
-    public virtual ICollection<GrossSalary> GrossSalaries { get; set; } = new List<GrossSalary>();
+    public virtual GrossSalary GrossSalaries { get; set; } = new GrossSalary();
 
-    public virtual ICollection<NetSalary> NetSalaries { get; set; } = new List<NetSalary>();
+    public virtual NetSalary NetSalaries { get; set; } = new NetSalary();
 
-    public virtual PersonalInformation Personal { get; set; } = null!;
-
-    public virtual ICollection<TotalDeduction> TotalDeductions { get; set; } = new List<TotalDeduction>();
+    public virtual TotalDeduction TotalDeductions { get; set; } = new TotalDeduction();
 }

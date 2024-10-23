@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll_Library.Models;
 
@@ -11,9 +12,11 @@ using Payroll_Library.Models;
 namespace Payroll_Library.Migrations
 {
     [DbContext(typeof(AriarPayrollDbContext))]
-    partial class AriarPayrollDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241025002628_updated attendance")]
+    partial class updatedattendance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,6 +65,10 @@ namespace Payroll_Library.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("status");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("type");
 
                     b.HasKey("AttendanceId")
                         .HasName("PK__Attendan__20D6A9682236CCF9");

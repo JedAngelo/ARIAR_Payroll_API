@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class EmployeeBiometric
 {
+    [Key]
     public int RecordId { get; set; }
 
     public Guid PersonalId { get; set; }
@@ -13,5 +15,5 @@ public partial class EmployeeBiometric
 
     public DateTime RecordDate { get; set; }
 
-    public virtual PersonalInformation Personal { get; set; } = null!;
+    public virtual PersonalInformation Personnel { get; set; } = null!;
 }

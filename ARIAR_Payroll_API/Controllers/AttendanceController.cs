@@ -19,12 +19,26 @@ namespace ARIAR_Payroll_API.Controllers
         }
 
 
-        [HttpPost("AddAttendance")]
-        public async Task<ActionResult<ApiResponse<string>>> AddAttendance(AttendanceDto dto)
+        [HttpPost("LogAttendance")]
+        public async Task<ActionResult<ApiResponse<string>>> LogAttendance(AttendanceDto dto)
         {
-            var result = await _attendanceService.AddAttendance(dto);
+            var result = await _attendanceService.LogAttendance(dto);
             return Ok(result);
 
+        }
+
+        [HttpPost("HasMorningIn")]
+        public async Task<ActionResult<ApiResponse<bool>>> HasMorningIn(AttendanceDto dto)
+        {
+            var result = await _attendanceService.HasMorningIn(dto);
+            return Ok(result);
+        }
+
+        [HttpPost("GetAllAttendanceShort")]
+        public async Task<ActionResult<ApiResponse<List<AttendanceDisplayDto>>>> GetAllAttendanceShort(DateOnly date)
+        {
+            var result = await _attendanceService.GetAllAttendanceShort(date);
+            return Ok(result);
         }
     }
 

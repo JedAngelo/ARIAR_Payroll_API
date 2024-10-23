@@ -1,4 +1,5 @@
 ﻿using Payroll_Library.Models.Dto;
+using Payroll_Library.Models.Dto.AttendanceDto;
 using Payroll_Library.Models.Dto.EmployeeDto;
 
 namespace Payroll_Library.Services.Employee

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class TotalDeduction
 {
+    [Key]
     public int TotalDeductionId { get; set; }
 
     public Guid PayrollId { get; set; }

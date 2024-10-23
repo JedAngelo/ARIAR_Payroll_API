@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll_Library.Models;
 
@@ -11,9 +12,11 @@ using Payroll_Library.Models;
 namespace Payroll_Library.Migrations
 {
     [DbContext(typeof(AriarPayrollDbContext))]
-    partial class AriarPayrollDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241020143455_fixed time precision")]
+    partial class fixedtimeprecision
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,10 +61,6 @@ namespace Payroll_Library.Migrations
                     b.Property<Guid>("PersonalId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("personal_id");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("status");
 
                     b.HasKey("AttendanceId")
                         .HasName("PK__Attendan__20D6A9682236CCF9");
@@ -520,40 +519,40 @@ namespace Payroll_Library.Migrations
 
             modelBuilder.Entity("Payroll_Library.Models.Attendance", b =>
                 {
-                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personnel")
+                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
                         .WithMany("Attendances")
                         .HasForeignKey("PersonalId")
                         .IsRequired()
                         .HasConstraintName("FK_Attendance_Personal_Information");
 
-                    b.Navigation("Personnel");
+                    b.Navigation("Personal");
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.ContactInformation", b =>
                 {
-                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personnel")
+                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
                         .WithOne("ContactInformations")
                         .HasForeignKey("Payroll_Library.Models.ContactInformation", "PersonalId")
                         .IsRequired()
                         .HasConstraintName("FK_Contact_Information_Personal_Information");
 
-                    b.Navigation("Personnel");
+                    b.Navigation("Personal");
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.EmployeeBiometric", b =>
                 {
-                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personnel")
+                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
                         .WithMany("EmployeeBiometrics")
                         .HasForeignKey("PersonalId")
                         .IsRequired()
                         .HasConstraintName("FK_Employee_Biometric_Personal_Information");
 
-                    b.Navigation("Personnel");
+                    b.Navigation("Personal");
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.EmploymentDetail", b =>
                 {
-                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personnel")
+                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
                         .WithOne("EmploymentDetails")
                         .HasForeignKey("Payroll_Library.Models.EmploymentDetail", "PersonalId")
                         .IsRequired()
@@ -565,7 +564,7 @@ namespace Payroll_Library.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Employment_Details_Position");
 
-                    b.Navigation("Personnel");
+                    b.Navigation("Personal");
 
                     b.Navigation("Position");
                 });
@@ -605,13 +604,13 @@ namespace Payroll_Library.Migrations
 
             modelBuilder.Entity("Payroll_Library.Models.Payroll", b =>
                 {
-                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personnel")
+                    b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
                         .WithMany("Payrolls")
                         .HasForeignKey("PersonalId")
                         .IsRequired()
                         .HasConstraintName("FK_Payroll_Personal_Information");
 
-                    b.Navigation("Personnel");
+                    b.Navigation("Personal");
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.TotalDeduction", b =>

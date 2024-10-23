@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Payroll_Library.Models.Dto;
 using Payroll_Library.Models.Dto.EmployeeDto;
@@ -16,7 +18,6 @@ namespace ARIAR_Payroll_API.Controllers
         {
             _biomentricService = biomentricService;
         }
-
         [HttpPost("AddBiometricData")]
         public async Task<ActionResult<ApiResponse<string>>> AddBiometricData(EmployeeBiometricDto dto)
         {
