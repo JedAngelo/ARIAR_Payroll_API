@@ -1,4 +1,5 @@
-﻿using Payroll_Library.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Payroll_Library.Models;
 using Payroll_Library.Models.Dto;
 using Payroll_Library.Models.Dto.EmployeeDto;
 using System;
@@ -70,11 +71,11 @@ namespace Payroll_Library.Services.Employee
         {
             try
             {
-                var _employeeBiometric = _context.EmployeeBiometrics.Select(x => new EmployeeBiometricDisplayDto()
+                var _employeeBiometric = await _context.EmployeeBiometrics.Select(x => new EmployeeBiometricDisplayDto()
                 {
                     PersonalId = x.PersonalId,
                     BiometricData = x.BiometricData
-                }).ToList();
+                }).ToListAsync();
 
                 return new ApiResponse<List<EmployeeBiometricDisplayDto>>
                 {

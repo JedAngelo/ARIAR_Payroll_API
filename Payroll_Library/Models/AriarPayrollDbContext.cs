@@ -55,24 +55,26 @@ public partial class AriarPayrollDbContext : DbContext
 
             entity.ToTable("Attendance");
 
+            entity.HasIndex(e => e.PersonalId, "IX_Attendance_personal_id");
+
             entity.Property(e => e.AttendanceId).HasColumnName("attendance_id");
             entity.Property(e => e.AfternoonIn)
-                .HasColumnName("afternoon_in")
-                .HasPrecision(0);
+                .HasPrecision(0)
+                .HasColumnName("afternoon_in");
             entity.Property(e => e.AfternoonOut)
-                .HasColumnName("afternoon_out")
-                .HasPrecision(0);
-            entity.Property(e => e.MorningIn)
-                .HasColumnName("morning_in")
-                .HasPrecision(0);
-            entity.Property(e => e.MorningOut)
-                .HasColumnName("morning_out")
-                .HasPrecision(0);
+                .HasPrecision(0)
+                .HasColumnName("afternoon_out");
             entity.Property(e => e.AttendanceDate).HasColumnName("attendance_date");
-            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.MorningIn)
+                .HasPrecision(0)
+                .HasColumnName("morning_in");
+            entity.Property(e => e.MorningOut)
+                .HasPrecision(0)
+                .HasColumnName("morning_out");
             entity.Property(e => e.PersonalId).HasColumnName("personal_id");
+            entity.Property(e => e.Status).HasColumnName("status");
 
-            entity.HasOne(d => d.Personnel).WithMany(p => p.Attendances)
+            entity.HasOne(d => d.Personal).WithMany(p => p.Attendances)
                 .HasForeignKey(d => d.PersonalId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Attendance_Personal_Information");
@@ -106,6 +108,8 @@ public partial class AriarPayrollDbContext : DbContext
 
             entity.ToTable("Contact_Information");
 
+            entity.HasIndex(e => e.PersonalId, "IX_Contact_Information_personal_id").IsUnique();
+
             entity.Property(e => e.ContactId).HasColumnName("contact_id");
             entity.Property(e => e.Address)
                 .HasMaxLength(255)
@@ -121,7 +125,7 @@ public partial class AriarPayrollDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("phone_number");
 
-            entity.HasOne(d => d.Personnel).WithOne(p => p.ContactInformations)
+            entity.HasOne(d => d.Personal).WithOne(p => p.ContactInformation)
                 .HasForeignKey<ContactInformation>(d => d.PersonalId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Contact_Information_Personal_Information");
@@ -133,12 +137,14 @@ public partial class AriarPayrollDbContext : DbContext
 
             entity.ToTable("Employee_Biometric");
 
+            entity.HasIndex(e => e.PersonalId, "IX_Employee_Biometric_personal_id");
+
             entity.Property(e => e.RecordId).HasColumnName("record_id");
             entity.Property(e => e.BiometricData).HasColumnName("biometric_data");
             entity.Property(e => e.PersonalId).HasColumnName("personal_id");
             entity.Property(e => e.RecordDate).HasColumnName("record_date");
 
-            entity.HasOne(d => d.Personnel).WithMany(p => p.EmployeeBiometrics)
+            entity.HasOne(d => d.Personal).WithMany(p => p.EmployeeBiometrics)
                 .HasForeignKey(d => d.PersonalId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Employee_Biometric_Personal_Information");
@@ -149,6 +155,10 @@ public partial class AriarPayrollDbContext : DbContext
             entity.HasKey(e => e.EmploymentId).HasName("PK__Employme__63C1606468BACA47");
 
             entity.ToTable("Employment_Details");
+
+            entity.HasIndex(e => e.PersonalId, "IX_Employment_Details_personal_id").IsUnique();
+
+            entity.HasIndex(e => e.PositionId, "IX_Employment_Details_position_id");
 
             entity.Property(e => e.EmploymentId).HasColumnName("employment_id");
             entity.Property(e => e.HireDate).HasColumnName("hire_date");
@@ -170,7 +180,7 @@ public partial class AriarPayrollDbContext : DbContext
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("sss_employee_rate");
 
-            entity.HasOne(d => d.Personnel).WithOne(p => p.EmploymentDetails)
+            entity.HasOne(d => d.Personal).WithOne(p => p.EmploymentDetail)
                 .HasForeignKey<EmploymentDetail>(d => d.PersonalId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Employment_Details_Personal_Information");
@@ -187,13 +197,15 @@ public partial class AriarPayrollDbContext : DbContext
 
             entity.ToTable("Gross_Salaries");
 
+            entity.HasIndex(e => e.PayrollId, "IX_Gross_Salaries_payroll_id").IsUnique();
+
             entity.Property(e => e.SalaryId).HasColumnName("salary_id");
             entity.Property(e => e.GrossSalaryAmount)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("gross_salary_amount");
             entity.Property(e => e.PayrollId).HasColumnName("payroll_id");
 
-            entity.HasOne(d => d.Payroll).WithOne(p => p.GrossSalaries)
+            entity.HasOne(d => d.Payroll).WithOne(p => p.GrossSalary)
                 .HasForeignKey<GrossSalary>(d => d.PayrollId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Gross_Salaries_Payroll");
@@ -204,6 +216,8 @@ public partial class AriarPayrollDbContext : DbContext
             entity.HasKey(e => e.LeaveId).HasName("PK__Leaves__743350BC431B4E71");
 
             entity.ToTable("Leave");
+
+            entity.HasIndex(e => e.PersonalId, "IX_Leave_personal_id");
 
             entity.Property(e => e.LeaveId).HasColumnName("leave_id");
             entity.Property(e => e.EndDate).HasColumnName("end_date");
@@ -222,13 +236,15 @@ public partial class AriarPayrollDbContext : DbContext
 
             entity.ToTable("Net_Salaries");
 
+            entity.HasIndex(e => e.PayrollId, "IX_Net_Salaries_payroll_id").IsUnique();
+
             entity.Property(e => e.NetSalaryId).HasColumnName("net_salary_id");
             entity.Property(e => e.NetSalaryAmount)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("net_salary_amount");
             entity.Property(e => e.PayrollId).HasColumnName("payroll_id");
 
-            entity.HasOne(d => d.Payroll).WithOne(p => p.NetSalaries)
+            entity.HasOne(d => d.Payroll).WithOne(p => p.NetSalary)
                 .HasForeignKey<NetSalary>(d => d.PayrollId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Net_Salaries_Payroll");
@@ -237,6 +253,8 @@ public partial class AriarPayrollDbContext : DbContext
         modelBuilder.Entity<Payroll>(entity =>
         {
             entity.ToTable("Payroll");
+
+            entity.HasIndex(e => e.PersonalId, "IX_Payroll_personal_id");
 
             entity.Property(e => e.PayrollId)
                 .ValueGeneratedNever()
@@ -247,7 +265,7 @@ public partial class AriarPayrollDbContext : DbContext
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("total_work_day");
 
-            entity.HasOne(d => d.Personnel).WithMany(p => p.Payrolls)
+            entity.HasOne(d => d.Personal).WithMany(p => p.Payrolls)
                 .HasForeignKey(d => d.PersonalId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Payroll_Personal_Information");
@@ -274,6 +292,7 @@ public partial class AriarPayrollDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("deleted_by");
             entity.Property(e => e.DeletedDate).HasColumnName("deleted_date");
+            entity.Property(e => e.EmployeeImage).HasColumnName("employee_image");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
                 .IsUnicode(false)
@@ -282,6 +301,10 @@ public partial class AriarPayrollDbContext : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("gender");
+            entity.Property(e => e.MaritalStatus)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("marital_status");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.LastName)
@@ -336,6 +359,8 @@ public partial class AriarPayrollDbContext : DbContext
 
             entity.ToTable("Total_Deductions");
 
+            entity.HasIndex(e => e.PayrollId, "IX_Total_Deductions_payroll_id").IsUnique();
+
             entity.Property(e => e.TotalDeductionId).HasColumnName("total_deduction_id");
             entity.Property(e => e.IncomeTaxDeductionAmount).HasColumnName("income_tax_deduction_amount");
             entity.Property(e => e.PagibigDeductionAmount).HasColumnName("pagibig_deduction_amount");
@@ -343,7 +368,7 @@ public partial class AriarPayrollDbContext : DbContext
             entity.Property(e => e.PhilhealthDeductionAmount).HasColumnName("philhealth_deduction_amount");
             entity.Property(e => e.SssDeductionAmount).HasColumnName("sss_deduction_amount");
 
-            entity.HasOne(d => d.Payroll).WithOne(p => p.TotalDeductions)
+            entity.HasOne(d => d.Payroll).WithOne(p => p.TotalDeduction)
                 .HasForeignKey<TotalDeduction>(d => d.PayrollId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Total_Deductions_Payroll");

@@ -11,5 +11,7 @@ namespace Payroll_Library.UserAuth
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public ICollection<Permission>? Permissions { get; set; } = new List<Permission>();
+
     }
 }

@@ -13,5 +13,6 @@ namespace Payroll_Library.Models.Dto.UserAuthDto
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public List<PermissionDto>? PermissionDtos { get; set; } = new List<PermissionDto>();
     }
 }

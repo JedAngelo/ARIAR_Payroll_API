@@ -4,6 +4,8 @@ using Payroll_Library.Models.Dto;
 using Payroll_Library.Models.Dto.AttendanceDto;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,51 +31,59 @@ namespace Payroll_Library.Services.AttendanceServ
                 var fullDay = "FULL DAY";
                 var leave = "LEAVE";
 
-                var _apiMessage = "";
+                var _apiSuccessMessage = "";
+                var _apiErrorMessage = "";
+
+                var _apiSuccess = false;
+
+                var _currentDateLog = await _context.Attendances.AnyAsync(a => a.AttendanceDate == dto.AttendanceDate);
+                if (!_currentDateLog)
+                {
+                    var employees = await _context.PersonalInformations.ToListAsync();
+                    foreach (var employee in employees)
+                    {
+                        var _initAttendance = new Attendance
+                        {
+                            PersonalId = employee.PersonalId,
+                            AttendanceDate = dto.AttendanceDate
+                        };
+                        await _context.Attendances.AddAsync(_initAttendance);
+                    }
+                    await _context.SaveChangesAsync();
+                }
 
                 if (dto.MorningIn != null)
                 {
-                    var _existingLog = await _context.Attendances.AnyAsync(a => a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate);
-                    if (_existingLog)
+                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(a => a.MorningIn == null && a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate);
+                    
+                    if (_existingLog == null)
                     {
-                        _apiMessage = "Invalid time in, you already have a time in data";
+                        _apiErrorMessage = "Invalid time in, you already have a time in data";
                     }
                     else
                     {
-                        var _morningIn = new Attendance
-                        {
-                            AttendanceId = 0,
-                            PersonalId = dto.PersonalId,
-                            MorningIn = dto.MorningIn,
-                            AttendanceDate = dto.AttendanceDate
-                        };
+                        _existingLog.MorningIn = dto.MorningIn;
 
-                        await _context.Attendances.AddAsync(_morningIn);
                         await _context.SaveChangesAsync();
-                        _apiMessage = "Log morning in";
+                        _apiSuccessMessage = "Log morning in";
+                        _apiSuccess = true;
                     }
                 }
                 if (dto.AfternoonIn != null)
                 {
-                    var _existingLog = await _context.Attendances.AnyAsync(a => a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate);
-                    if (_existingLog)
+                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(a => a.MorningIn == null || a.AfternoonIn == null && a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate);
+                    
+                    if (_existingLog == null)
                     {
-                        _apiMessage = "Invalid time in, you already have time in data";
+                        _apiErrorMessage = "Invalid time in, you already have time in data";
                     }
                     else
                     {
-                        var _afternoonIn = new Attendance
-                        {
-                            AttendanceId = 0,
-                            PersonalId = dto.PersonalId,
-                            AfternoonIn = dto.AfternoonIn,
-                            AttendanceDate = dto.AttendanceDate,
-                            Status = halfDay
-                        };
+                        _existingLog.AfternoonIn = dto.AfternoonIn;
 
-                        await _context.Attendances.AddAsync(_afternoonIn);
                         await _context.SaveChangesAsync();
-                        _apiMessage = "Log afternoon in";
+                        _apiSuccessMessage = "Log afternoon in";
+                        _apiSuccess = true;
                     }
                 }
                 if (dto.MorningOut != null)
@@ -83,13 +93,13 @@ namespace Payroll_Library.Services.AttendanceServ
                     {
                         _existingLog.MorningOut = dto.MorningOut;
                         _existingLog.Status = halfDay;
-                        _context.Attendances.Update(_existingLog);
                         await _context.SaveChangesAsync();
-                        _apiMessage = "Log morning out, logged as half day";
+                        _apiSuccessMessage = "Log morning out, logged as half day";
+                        _apiSuccess = true;
                     }
                     else
                     {
-                        _apiMessage = "Invalid log out, you already logged out";
+                        _apiErrorMessage = "Invalid log out, you already logged out";
                     }
                 }
                 if (dto.AfternoonOut != null)
@@ -103,16 +113,17 @@ namespace Payroll_Library.Services.AttendanceServ
                         await _context.SaveChangesAsync();
                         if (_existingLog.MorningIn != null)
                         {
-                            _apiMessage = "Log afternoon out, logged as full day";
+                            _apiSuccessMessage = "Log afternoon out, logged as full day";
                         }
                         else
                         {
-                            _apiMessage = "Log afternoon out, logged as half day";
+                            _apiSuccessMessage = "Log afternoon out, logged as half day";
                         }
+                        _apiSuccess = true;
                     }
                     else
                     {
-                        _apiMessage = "Invalid log out, you already logged out";
+                        _apiErrorMessage = "Invalid log out, you already logged out";
                     }
                 }
                 if (dto.Status == leave)
@@ -128,14 +139,15 @@ namespace Payroll_Library.Services.AttendanceServ
                     await _context.Attendances.AddAsync(_leaveAttendance);
                     await _context.SaveChangesAsync();
 
-                    _apiMessage = "Logged as on leave";
+                    _apiSuccessMessage = "Logged as on leave";
+                    _apiSuccess = true;
                 }
 
                 return new ApiResponse<string>
                 {
-                    Data = _apiMessage,
-                    ErrorMessage = "",
-                    IsSuccess = true
+                    Data = _apiSuccessMessage,
+                    ErrorMessage = _apiErrorMessage,
+                    IsSuccess = _apiSuccess
                 };
 
             }
@@ -183,21 +195,22 @@ namespace Payroll_Library.Services.AttendanceServ
             try
             {
 
-                var _attendanceData = await _context.Attendances.Include(a => a.Personnel).Where(a => a.AttendanceDate == date).ToListAsync();
+                var _attendanceData = await _context.Attendances.Include(a => a.Personal).Where(a => a.AttendanceDate == date).ToListAsync();
 
                 var _attendanceDisplay = new List<AttendanceDisplayDto>();
 
                 foreach (var attendance in _attendanceData)
                 {
-                    var personnel = attendance.Personnel;
+                    var Personal = attendance.Personal;
                    
                     if (attendance.MorningIn != null)
                     {
-                        _attendanceDisplay.Add(new AttendanceDisplayDto
+                        _attendanceDisplay.Add( new AttendanceDisplayDto
                         {
-                            Name = $"{attendance.Personnel.LastName}, {attendance.Personnel.FirstName} {(string.IsNullOrEmpty(attendance.Personnel.MiddleName) ? "" : attendance.Personnel.MiddleName[0].ToString())}.",
+                            Name = $"{attendance.Personal.LastName}, {attendance.Personal.FirstName} {(string.IsNullOrEmpty(attendance.Personal.MiddleName) ? "" : attendance.Personal.MiddleName[0].ToString())}.",
                             Log = attendance.MorningIn,
-                            Type = "TIME IN - AM"
+                            Type = "TIME IN - AM",
+                            EmployeeImage = attendance.Personal.EmployeeImage!
                         });
                     }
 
@@ -205,9 +218,10 @@ namespace Payroll_Library.Services.AttendanceServ
                     {
                         _attendanceDisplay.Add(new AttendanceDisplayDto
                         {
-                            Name = $"{attendance.Personnel.LastName}, {attendance.Personnel.FirstName} {(string.IsNullOrEmpty(attendance.Personnel.MiddleName) ? "" : attendance.Personnel.MiddleName[0].ToString())}.",
+                            Name = $"{attendance.Personal.LastName}, {attendance.Personal.FirstName} {(string.IsNullOrEmpty(attendance.Personal.MiddleName) ? "" : attendance.Personal.MiddleName[0].ToString())}.",
                             Log = attendance.MorningOut,
-                            Type = "TIME OUT - AM (HALF DAY)"
+                            Type = "TIME OUT - AM (HALF DAY)",
+                            EmployeeImage = attendance.Personal.EmployeeImage!
                         });
                     }
 
@@ -215,9 +229,10 @@ namespace Payroll_Library.Services.AttendanceServ
                     {
                         _attendanceDisplay.Add(new AttendanceDisplayDto
                         {
-                            Name = $"{attendance.Personnel.LastName}, {attendance.Personnel.FirstName} {(string.IsNullOrEmpty(attendance.Personnel.MiddleName) ? "" : attendance.Personnel.MiddleName[0].ToString())}.",
+                            Name = $"{attendance.Personal.LastName}, {attendance.Personal.FirstName} {(string.IsNullOrEmpty(attendance.Personal.MiddleName) ? "" : attendance.Personal.MiddleName[0].ToString())}.",
                             Log = attendance.AfternoonIn,
-                            Type = "TIME IN - PM"
+                            Type = "TIME IN - PM",
+                            EmployeeImage = attendance.Personal.EmployeeImage!
                         });
                     }
 
@@ -230,13 +245,15 @@ namespace Payroll_Library.Services.AttendanceServ
                         }
                         _attendanceDisplay.Add(new AttendanceDisplayDto
                         {
-                            Name = $"{attendance.Personnel.LastName}, {attendance.Personnel.FirstName} {(string.IsNullOrEmpty(attendance.Personnel.MiddleName) ? "" : attendance.Personnel.MiddleName[0].ToString())}.",
+                            Name = $"{attendance.Personal.LastName}, {attendance.Personal.FirstName} {(string.IsNullOrEmpty(attendance.Personal.MiddleName) ? "" : attendance.Personal.MiddleName[0].ToString())}.",
                             Log = attendance.AfternoonOut,
-                            Type = _type
+                            Type = _type,
+                            EmployeeImage = attendance.Personal.EmployeeImage!
                         });
                     }
                     
                 }
+                _attendanceDisplay = _attendanceDisplay.OrderBy(a => a.Log).ToList();
 
                 return new ApiResponse<List<AttendanceDisplayDto>>
                 {
@@ -257,7 +274,51 @@ namespace Payroll_Library.Services.AttendanceServ
             }
         }
 
+        public async Task<ApiResponse<LogCountDto>> CountLog(DateOnly date)
+        {
+            try
+            {
 
+                var _attendanceData = await _context.Attendances.Where(a => a.AttendanceDate == date).ToListAsync();
+
+                if (_attendanceData.Count == 0)
+                {
+                    return new ApiResponse<LogCountDto>
+                    {
+                        Data = null!,
+                        ErrorMessage = "Attendance data not found",
+                        IsSuccess = false
+                    };
+                }
+
+                var _currentDate = DateOnly.FromDateTime(DateTime.Now);
+                var _counts = new LogCountDto
+                {
+                    PresentCount = _attendanceData.Count(x => x.Status == "FULL DAY" || x.Status == "HALF DAY"),
+                    AbsentCount = _attendanceData.Count(x => x.Status == null && _currentDate > x.AttendanceDate),
+                    LeaveCount = _attendanceData.Count(x => x.Status == "ON LEAVE")
+                };
+
+                return new ApiResponse<LogCountDto>
+                {
+                    Data = _counts,
+                    ErrorMessage = "",
+                    IsSuccess = true
+                };
+
+
+            }
+            catch (Exception ex)
+            {
+
+                return new ApiResponse<LogCountDto>
+                {
+                    Data = new LogCountDto(),
+                    ErrorMessage = ex.Message,
+                    IsSuccess = false
+                };
+            }
+        }
 
     }
 }

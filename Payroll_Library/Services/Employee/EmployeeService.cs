@@ -48,29 +48,38 @@ namespace Payroll_Library.Services.Employee
                         LastName = dto.LastName,
                         Age = dto.Age,
                         Gender = dto.Gender,
+                        MaritalStatus = dto.MaritalStatus,
                         DateOfBirth = dto.DateOfBirth,
-                        ContactInformations = new ContactInformation
+                        //EmployeeImage = dto.EmployeeImage,
+                        ContactInformation = new ContactInformation
                         {
                             ContactId = 0,
                             Address = _contact.Address,
                             Email = _contact.Email,
-                            PhoneNumber = _contact.PhoneNumber                           
+                            PhoneNumber = _contact.PhoneNumber
 
                         },
-                        EmploymentDetails =  new EmploymentDetail
+                        EmploymentDetail = new EmploymentDetail
                         {
                             EmploymentId = 0,
                             HireDate = _employmentDetail.HireDate,
                             IncomeTaxRate = _employmentDetail.IncomeTaxRate,
                             PagibigEmployeeRate = _employmentDetail.PagibigEmployeeRate,
+                            SssEmployeeRate = _employmentDetail.SssEmployeeRate,
+                            PhilhealthEmployeeRate = _employmentDetail.PhilhealthEmployeeRate,
                             PayRate = _employmentDetail.PayRate,
                             PositionId = _employmentDetail.PositionId
                         },
                         CreatedBy = dto.CreatedBy,
-                        CreatedDate = dto.CreatedDate,
+                        CreatedDate = DateTime.Now,
                         IsActive = dto.IsActive,
                         IsDeleted = false,
                     };
+
+                    if (dto.EmployeeImage != null)
+                    {
+                        _personalInfo.EmployeeImage = dto.EmployeeImage;
+                    }
 
                     await _context.AddAsync(_personalInfo);
                     await _context.SaveChangesAsync();
@@ -85,8 +94,8 @@ namespace Payroll_Library.Services.Employee
                 else
                 {
                     var _existingPersonalInfo = await _context.PersonalInformations
-                        .Include(pi => pi.ContactInformations)
-                        .Include(pi => pi.EmploymentDetails)
+                        .Include(pi => pi.ContactInformation)
+                        .Include(pi => pi.EmploymentDetail)
                         .FirstOrDefaultAsync(pi => pi.PersonalId == dto.PersonalId);
 
                     if (_existingPersonalInfo == null)
@@ -116,6 +125,7 @@ namespace Payroll_Library.Services.Employee
                     _existingPersonalInfo.LastName = dto.LastName;
                     _existingPersonalInfo.Age = dto.Age;
                     _existingPersonalInfo.Gender = dto.Gender;
+                    _existingPersonalInfo.MaritalStatus = dto.MaritalStatus;
                     _existingPersonalInfo.DateOfBirth = dto.DateOfBirth;
                     _existingPersonalInfo.ModifiedBy = dto.ModifiedBy;
                     _existingPersonalInfo.ModifiedDate = dto.ModifiedDate;
@@ -124,20 +134,20 @@ namespace Payroll_Library.Services.Employee
 
                     // Update existing contact information
                     var _newContact = dto.ContactInformationDtos; // This is expected to be a single DTO
-                    var _existingContact = _existingPersonalInfo.ContactInformations;
+                    var _existingContact = _existingPersonalInfo.ContactInformation;
                     if (_newContact != null)
                     {
-                        _existingContact.Address = _newContact.Address;
+                        _existingContact!.Address = _newContact.Address;
                         _existingContact.PhoneNumber = _newContact.PhoneNumber;
                     }
 
 
                     // Update existing employment details
                     var _newEmployment = dto.EmploymentDetailDtos;
-                    var _existingEmployment = _existingPersonalInfo.EmploymentDetails;
+                    var _existingEmployment = _existingPersonalInfo.EmploymentDetail;
                     if (_newEmployment != null)
                     {
-                        _existingEmployment.HireDate = _newEmployment.HireDate;
+                        _existingEmployment!.HireDate = _newEmployment.HireDate;
                         _existingEmployment.IncomeTaxRate = _newEmployment.IncomeTaxRate;
                         _existingEmployment.PagibigEmployeeRate = _newEmployment.PagibigEmployeeRate;
                         _existingEmployment.PayRate = _newEmployment.PayRate;
@@ -253,17 +263,33 @@ namespace Payroll_Library.Services.Employee
         {
             try
             {
-                var _personalInfo = await _context.PersonalInformations.Select(x => new PersonalInformationDisplayDto
-                {
-                    PersonalId = x.PersonalId,
-                    FirstName = x.FirstName,
-                    MiddleName = x.MiddleName,
-                    LastName = x.LastName,
-                    Age = x.Age,
-                    DateOfBirth = x.DateOfBirth,
-                    Gender = x.Gender
-
-                }).ToListAsync();
+                var _personalInfo = await _context.PersonalInformations
+                                          .Include(c => c.ContactInformation)
+                                          .Include(e => e.EmploymentDetail)
+                                          .Include(p => p.EmploymentDetail!.Position)
+                                          .Select(x => new PersonalInformationDisplayDto
+                                          {
+                                              PersonalId = x.PersonalId,
+                                              FirstName = x.FirstName,
+                                              MiddleName = x.MiddleName,
+                                              LastName = x.LastName,
+                                              Age = x.Age,
+                                              DateOfBirth = x.DateOfBirth,
+                                              Gender = x.Gender,
+                                              MaritalStatus = x.MaritalStatus,
+                                              EmployeeImage = x.EmployeeImage,
+                                              PhoneNumber = x.ContactInformation.PhoneNumber,
+                                              Address = x.ContactInformation.Address,
+                                              Email = x.ContactInformation.Email,
+                                              HireDate = x.EmploymentDetail.HireDate,
+                                              PayRate = x.EmploymentDetail.PayRate,
+                                              IncomeTaxRate = x.EmploymentDetail.IncomeTaxRate,
+                                              SssEmployeeRate = x.EmploymentDetail.SssEmployeeRate,
+                                              PagibigEmployeeRate = x.EmploymentDetail.PagibigEmployeeRate,
+                                              PhilhealthEmployeeRate = x.EmploymentDetail.PhilhealthEmployeeRate,
+                                              PositionId = x.EmploymentDetail.PositionId,
+                                              PositionName = x.EmploymentDetail.Position.PositionName                                            
+                                          }).ToListAsync();
 
                 return new ApiResponse<List<PersonalInformationDisplayDto>>
                 {
@@ -282,6 +308,68 @@ namespace Payroll_Library.Services.Employee
                     Data = [],
                     ErrorMessage = $"Error: {ex.Message}",
                     IsSuccess= false
+                };
+            }
+        }
+
+        public async Task<ApiResponse<PersonalInformationDisplayDto>> DisplayPersonalInfoById(Guid id)
+        {
+            try
+            {
+                var _personalInfo = await _context.PersonalInformations
+                                          .Where(p => p.PersonalId == id)
+                                          .Include(c => c.ContactInformation)
+                                          .Include(e => e.EmploymentDetail)
+                                          .Include(p => p.EmploymentDetail!.Position)
+                                          .Select(x => new PersonalInformationDisplayDto
+                                          {
+                                              PersonalId = x.PersonalId,
+                                              FirstName = x.FirstName,
+                                              MiddleName = x.MiddleName,
+                                              LastName = x.LastName,
+                                              Age = x.Age,
+                                              DateOfBirth = x.DateOfBirth,
+                                              Gender = x.Gender,
+                                              EmployeeImage = x.EmployeeImage,
+                                              PhoneNumber = x.ContactInformation!.PhoneNumber,
+                                              Address = x.ContactInformation.Address,
+                                              Email = x.ContactInformation.Email,
+                                              HireDate = x.EmploymentDetail!.HireDate,
+                                              PayRate = x.EmploymentDetail.PayRate,
+                                              IncomeTaxRate = x.EmploymentDetail.IncomeTaxRate,
+                                              SssEmployeeRate = x.EmploymentDetail.SssEmployeeRate,
+                                              PagibigEmployeeRate = x.EmploymentDetail.PagibigEmployeeRate,
+                                              PhilhealthEmployeeRate = x.EmploymentDetail.PhilhealthEmployeeRate,
+                                              PositionId = x.EmploymentDetail.PositionId,
+                                              PositionName = x.EmploymentDetail.Position.PositionName
+                                          }).FirstOrDefaultAsync();
+
+                if (_personalInfo != null)
+                {
+                    return new ApiResponse<PersonalInformationDisplayDto>
+                    {
+                        Data = _personalInfo,
+                        ErrorMessage = "",
+                        IsSuccess = true
+                    };
+                }
+
+                return new ApiResponse<PersonalInformationDisplayDto>
+                {
+                    Data = new PersonalInformationDisplayDto(),
+                    ErrorMessage = "Personal ID does not exist",
+                    IsSuccess = false
+                };
+
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<PersonalInformationDisplayDto>
+                {
+                    Data = new PersonalInformationDisplayDto(),
+                    ErrorMessage = $"Error: {ex.Message}",
+                    IsSuccess = false
                 };
             }
         }

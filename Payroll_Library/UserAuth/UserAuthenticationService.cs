@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Payroll_Library.UserAuth
 {
@@ -49,8 +50,22 @@ namespace Payroll_Library.UserAuth
                 UserName = param.UserName,
                 Email = param.Email,
                 FirstName = param.FirstName,
-                LastName = param.LastName
+                LastName = param.LastName,
+                Permissions = new List<Permission>()
             };
+
+            if (param.PermissionDtos != null)
+            {
+                foreach(var d in param.PermissionDtos)
+                {
+                    var _permissions = new Permission
+                    {
+                        PermissionId = 0,
+                        AccessView = d.AccessView      
+                    };
+                    _userData.Permissions.Add(_permissions);
+                }
+            }
 
             var _createResult = await _userManager.CreateAsync(_userData, param.Password);
             if (!_createResult.Succeeded)
@@ -129,7 +144,8 @@ namespace Payroll_Library.UserAuth
 
         public async Task<ApiResponse<UserLoginDto>> LoginAsync(LoginModelDto param)
         {
-            var _checkUser = await _userManager.FindByNameAsync(param.UserName);
+            var _checkUser = await _userManager.Users.Include(p => p.Permissions).FirstOrDefaultAsync(u => u.UserName == param.UserName);
+            //var _checkUser = await _userManager.FindByNameAsync(param.UserName);
             if (_checkUser == null || !await _userManager.CheckPasswordAsync(_checkUser, param.Password))
             {
                 return new ApiResponse<UserLoginDto>
@@ -162,6 +178,9 @@ namespace Payroll_Library.UserAuth
                 signingCredentials: new SigningCredentials(_authSigningKey, SecurityAlgorithms.HmacSha256)
             );
 
+            var permissions = _checkUser.Permissions.Select(p => p.AccessView).ToList();
+
+
             var _newRefreshToken = await _userManager.GenerateUserTokenAsync(_checkUser, "SuperAdmin", "RefreshToken");
 
 
@@ -171,7 +190,8 @@ namespace Payroll_Library.UserAuth
                 UserName = _checkUser.UserName,
                 Token = new JwtSecurityTokenHandler().WriteToken(_token),
                 UserToken = _newRefreshToken,
-                UserRole = roles
+                UserRole = roles,
+                Permissions = permissions
             };
 
             return new ApiResponse<UserLoginDto>

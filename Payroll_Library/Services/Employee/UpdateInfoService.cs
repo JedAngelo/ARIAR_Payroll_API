@@ -45,7 +45,7 @@ namespace Payroll_Library.Services.Employee
                 //    PhoneNumber = c.PhoneNumber,
                 //}).ToList();
                 var _contact = dto.ContactInformationDtos;
-                _existingPersonalInfo.ContactInformations = new ContactInformation
+                _existingPersonalInfo.ContactInformation = new ContactInformation
                 {
                     ContactId = _contact.ContactId,
                     Address = _contact.Address,
@@ -100,7 +100,7 @@ namespace Payroll_Library.Services.Employee
                 }
 
                 var _employmentDetails = dto.EmploymentDetailDtos;
-                _existingPersonalInfo.EmploymentDetails = new EmploymentDetail
+                _existingPersonalInfo.EmploymentDetail = new EmploymentDetail
                 {
                     EmploymentId = _employmentDetails.EmploymentId,
                     HireDate = _employmentDetails.HireDate,

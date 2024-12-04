@@ -8,5 +8,6 @@ namespace Payroll_Library.Services.AttendanceServ
         Task<ApiResponse<string>> LogAttendance(AttendanceDto dto);
         Task<ApiResponse<bool>> HasMorningIn(AttendanceDto dto);
         Task<ApiResponse<List<AttendanceDisplayDto>>> GetAllAttendanceShort(DateOnly date);
+        Task<ApiResponse<LogCountDto>> CountLog(DateOnly date);
     }
 }

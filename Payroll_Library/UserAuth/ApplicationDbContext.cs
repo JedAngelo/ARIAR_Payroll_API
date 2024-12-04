@@ -10,7 +10,10 @@ namespace Payroll_Library.UserAuth
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
@@ -18,9 +21,8 @@ namespace Payroll_Library.UserAuth
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=DefaultCon");
+                optionsBuilder.UseSqlServer("DefaultCon");
             }
-
         }
     }
 }

@@ -12,8 +12,8 @@ using Payroll_Library.Models;
 namespace Payroll_Library.Migrations
 {
     [DbContext(typeof(AriarPayrollDbContext))]
-    [Migration("20241020092004_fixed relationship to matched ERD")]
-    partial class fixedrelationshiptomatchedERD
+    [Migration("20241202113459_added marital_status")]
+    partial class addedmarital_status
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,11 +35,13 @@ namespace Payroll_Library.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttendanceId"));
 
                     b.Property<TimeOnly?>("AfternoonIn")
-                        .HasColumnType("time")
+                        .HasPrecision(0)
+                        .HasColumnType("time(0)")
                         .HasColumnName("afternoon_in");
 
                     b.Property<TimeOnly?>("AfternoonOut")
-                        .HasColumnType("time")
+                        .HasPrecision(0)
+                        .HasColumnType("time(0)")
                         .HasColumnName("afternoon_out");
 
                     b.Property<DateOnly?>("AttendanceDate")
@@ -47,21 +49,27 @@ namespace Payroll_Library.Migrations
                         .HasColumnName("attendance_date");
 
                     b.Property<TimeOnly?>("MorningIn")
-                        .HasColumnType("time")
+                        .HasPrecision(0)
+                        .HasColumnType("time(0)")
                         .HasColumnName("morning_in");
 
                     b.Property<TimeOnly?>("MorningOut")
-                        .HasColumnType("time")
+                        .HasPrecision(0)
+                        .HasColumnType("time(0)")
                         .HasColumnName("morning_out");
 
                     b.Property<Guid>("PersonalId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("personal_id");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("status");
+
                     b.HasKey("AttendanceId")
                         .HasName("PK__Attendan__20D6A9682236CCF9");
 
-                    b.HasIndex("PersonalId");
+                    b.HasIndex(new[] { "PersonalId" }, "IX_Attendance_personal_id");
 
                     b.ToTable("Attendance", (string)null);
                 });
@@ -139,7 +147,7 @@ namespace Payroll_Library.Migrations
                     b.HasKey("ContactId")
                         .HasName("PK__Contact___024E7A86D7587303");
 
-                    b.HasIndex("PersonalId")
+                    b.HasIndex(new[] { "PersonalId" }, "IX_Contact_Information_personal_id")
                         .IsUnique();
 
                     b.ToTable("Contact_Information", (string)null);
@@ -170,7 +178,7 @@ namespace Payroll_Library.Migrations
                     b.HasKey("RecordId")
                         .HasName("PK__Employee__BFCFB4DD7DDB27F5");
 
-                    b.HasIndex("PersonalId");
+                    b.HasIndex(new[] { "PersonalId" }, "IX_Employee_Biometric_personal_id");
 
                     b.ToTable("Employee_Biometric", (string)null);
                 });
@@ -184,8 +192,8 @@ namespace Payroll_Library.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmploymentId"));
 
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("datetime2")
+                    b.Property<DateOnly>("HireDate")
+                        .HasColumnType("date")
                         .HasColumnName("hire_date");
 
                     b.Property<decimal>("IncomeTaxRate")
@@ -219,10 +227,10 @@ namespace Payroll_Library.Migrations
                     b.HasKey("EmploymentId")
                         .HasName("PK__Employme__63C1606468BACA47");
 
-                    b.HasIndex("PersonalId")
+                    b.HasIndex(new[] { "PersonalId" }, "IX_Employment_Details_personal_id")
                         .IsUnique();
 
-                    b.HasIndex("PositionId");
+                    b.HasIndex(new[] { "PositionId" }, "IX_Employment_Details_position_id");
 
                     b.ToTable("Employment_Details", (string)null);
                 });
@@ -247,7 +255,8 @@ namespace Payroll_Library.Migrations
                     b.HasKey("SalaryId")
                         .HasName("PK__Gross_Sa__A3C71C513EA2B2C1");
 
-                    b.HasIndex("PayrollId");
+                    b.HasIndex(new[] { "PayrollId" }, "IX_Gross_Salaries_payroll_id")
+                        .IsUnique();
 
                     b.ToTable("Gross_Salaries", (string)null);
                 });
@@ -276,7 +285,7 @@ namespace Payroll_Library.Migrations
                     b.HasKey("LeaveId")
                         .HasName("PK__Leaves__743350BC431B4E71");
 
-                    b.HasIndex("PersonalId");
+                    b.HasIndex(new[] { "PersonalId" }, "IX_Leave_personal_id");
 
                     b.ToTable("Leave", (string)null);
                 });
@@ -301,7 +310,8 @@ namespace Payroll_Library.Migrations
                     b.HasKey("NetSalaryId")
                         .HasName("PK__Net_Sala__6C719F7AC24E5CEE");
 
-                    b.HasIndex("PayrollId");
+                    b.HasIndex(new[] { "PayrollId" }, "IX_Net_Salaries_payroll_id")
+                        .IsUnique();
 
                     b.ToTable("Net_Salaries", (string)null);
                 });
@@ -326,7 +336,7 @@ namespace Payroll_Library.Migrations
 
                     b.HasKey("PayrollId");
 
-                    b.HasIndex("PersonalId");
+                    b.HasIndex(new[] { "PersonalId" }, "IX_Payroll_personal_id");
 
                     b.ToTable("Payroll", (string)null);
                 });
@@ -366,6 +376,10 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("deleted_date");
 
+                    b.Property<byte[]>("EmployeeImage")
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("employee_image");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -394,6 +408,13 @@ namespace Payroll_Library.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("last_name");
+
+                    b.Property<string>("MaritalStatus")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("marital_status");
 
                     b.Property<string>("MiddleName")
                         .HasMaxLength(100)
@@ -505,7 +526,8 @@ namespace Payroll_Library.Migrations
                     b.HasKey("TotalDeductionId")
                         .HasName("PK__Total_De__9AF15027D43CBC2C");
 
-                    b.HasIndex("PayrollId");
+                    b.HasIndex(new[] { "PayrollId" }, "IX_Total_Deductions_payroll_id")
+                        .IsUnique();
 
                     b.ToTable("Total_Deductions", (string)null);
                 });
@@ -524,7 +546,7 @@ namespace Payroll_Library.Migrations
             modelBuilder.Entity("Payroll_Library.Models.ContactInformation", b =>
                 {
                     b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
-                        .WithOne("ContactInformations")
+                        .WithOne("ContactInformation")
                         .HasForeignKey("Payroll_Library.Models.ContactInformation", "PersonalId")
                         .IsRequired()
                         .HasConstraintName("FK_Contact_Information_Personal_Information");
@@ -546,7 +568,7 @@ namespace Payroll_Library.Migrations
             modelBuilder.Entity("Payroll_Library.Models.EmploymentDetail", b =>
                 {
                     b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
-                        .WithOne("EmploymentDetails")
+                        .WithOne("EmploymentDetail")
                         .HasForeignKey("Payroll_Library.Models.EmploymentDetail", "PersonalId")
                         .IsRequired()
                         .HasConstraintName("FK_Employment_Details_Personal_Information");
@@ -565,8 +587,8 @@ namespace Payroll_Library.Migrations
             modelBuilder.Entity("Payroll_Library.Models.GrossSalary", b =>
                 {
                     b.HasOne("Payroll_Library.Models.Payroll", "Payroll")
-                        .WithMany("GrossSalaries")
-                        .HasForeignKey("PayrollId")
+                        .WithOne("GrossSalary")
+                        .HasForeignKey("Payroll_Library.Models.GrossSalary", "PayrollId")
                         .IsRequired()
                         .HasConstraintName("FK_Gross_Salaries_Payroll");
 
@@ -587,8 +609,8 @@ namespace Payroll_Library.Migrations
             modelBuilder.Entity("Payroll_Library.Models.NetSalary", b =>
                 {
                     b.HasOne("Payroll_Library.Models.Payroll", "Payroll")
-                        .WithMany("NetSalaries")
-                        .HasForeignKey("PayrollId")
+                        .WithOne("NetSalary")
+                        .HasForeignKey("Payroll_Library.Models.NetSalary", "PayrollId")
                         .IsRequired()
                         .HasConstraintName("FK_Net_Salaries_Payroll");
 
@@ -609,8 +631,8 @@ namespace Payroll_Library.Migrations
             modelBuilder.Entity("Payroll_Library.Models.TotalDeduction", b =>
                 {
                     b.HasOne("Payroll_Library.Models.Payroll", "Payroll")
-                        .WithMany("TotalDeductions")
-                        .HasForeignKey("PayrollId")
+                        .WithOne("TotalDeduction")
+                        .HasForeignKey("Payroll_Library.Models.TotalDeduction", "PayrollId")
                         .IsRequired()
                         .HasConstraintName("FK_Total_Deductions_Payroll");
 
@@ -619,24 +641,22 @@ namespace Payroll_Library.Migrations
 
             modelBuilder.Entity("Payroll_Library.Models.Payroll", b =>
                 {
-                    b.Navigation("GrossSalaries");
+                    b.Navigation("GrossSalary");
 
-                    b.Navigation("NetSalaries");
+                    b.Navigation("NetSalary");
 
-                    b.Navigation("TotalDeductions");
+                    b.Navigation("TotalDeduction");
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.PersonalInformation", b =>
                 {
                     b.Navigation("Attendances");
 
-                    b.Navigation("ContactInformations")
-                        .IsRequired();
+                    b.Navigation("ContactInformation");
 
                     b.Navigation("EmployeeBiometrics");
 
-                    b.Navigation("EmploymentDetails")
-                        .IsRequired();
+                    b.Navigation("EmploymentDetail");
 
                     b.Navigation("Leaves");
 

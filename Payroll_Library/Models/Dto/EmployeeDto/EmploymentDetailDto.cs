@@ -29,6 +29,6 @@ namespace Payroll_Library.Models.Dto.EmployeeDto
 
         //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
 
-        //public virtual PostionDto PositionDtos { get; set; } = new PostionDto();
+        //public virtual PostionDto? PositionDtos { get; set; } = new PostionDto();
     }
 }

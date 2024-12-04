@@ -11,5 +11,6 @@ namespace Payroll_Library.Models.Dto.AttendanceDto
         public string? Name { get; set; }
         public TimeOnly? Log { get; set; }
         public string? Type { get; set; }
+        public byte[] EmployeeImage { get; set; }
     }
 }

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class Attendance
 {
-    [Key]
     public int AttendanceId { get; set; }
 
     public Guid PersonalId { get; set; }
@@ -20,6 +18,8 @@ public partial class Attendance
     public TimeOnly? AfternoonOut { get; set; }
 
     public DateOnly? AttendanceDate { get; set; }
+
     public string? Status { get; set; }
-    public virtual PersonalInformation Personnel { get; set; } = null!;
+
+    public virtual PersonalInformation Personal { get; set; } = null!;
 }

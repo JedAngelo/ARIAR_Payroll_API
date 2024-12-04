@@ -27,6 +27,7 @@ builder.Services.AddScoped<IBiomentricService, BiomentricService>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCon")));
+builder.Services.AddDbContext<AriarPayrollDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultCon")));
 
 //User Auth
 builder.Services.AddIdentityCore<ApplicationUser>(opt =>

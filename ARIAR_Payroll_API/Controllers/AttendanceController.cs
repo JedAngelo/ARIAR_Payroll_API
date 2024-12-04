@@ -34,10 +34,17 @@ namespace ARIAR_Payroll_API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("GetAllAttendanceShort")]
+        [HttpGet("GetAllAttendanceShort/{date}")]
         public async Task<ActionResult<ApiResponse<List<AttendanceDisplayDto>>>> GetAllAttendanceShort(DateOnly date)
         {
             var result = await _attendanceService.GetAllAttendanceShort(date);
+            return Ok(result);
+        }
+
+        [HttpGet("GetLogCount/{date}")]
+        public async Task<ActionResult<ApiResponse<LogCountDto>>> CountLog(DateOnly date)
+        {
+            var result = await _attendanceService.CountLog(date);
             return Ok(result);
         }
     }

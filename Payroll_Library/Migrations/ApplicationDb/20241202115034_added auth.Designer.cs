@@ -12,8 +12,8 @@ using Payroll_Library.UserAuth;
 namespace Payroll_Library.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241005061506_another try for adding authentication")]
-    partial class anothertryforaddingauthentication
+    [Migration("20241202115034_added auth")]
+    partial class addedauth
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,27 @@ namespace Payroll_Library.Migrations.ApplicationDb
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Payroll_Library.UserAuth.Permission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionId"));
+
+                    b.Property<string>("AccessView")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PermissionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Permissions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -280,6 +301,20 @@ namespace Payroll_Library.Migrations.ApplicationDb
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Payroll_Library.UserAuth.Permission", b =>
+                {
+                    b.HasOne("Payroll_Library.UserAuth.ApplicationUser", "User")
+                        .WithMany("Permissions")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Payroll_Library.UserAuth.ApplicationUser", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

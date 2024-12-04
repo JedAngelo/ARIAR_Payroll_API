@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Payroll_Library.Models;
 
 public partial class Position
 {
-    [Key]
     public int PositionId { get; set; }
 
     public string PositionName { get; set; } = null!;

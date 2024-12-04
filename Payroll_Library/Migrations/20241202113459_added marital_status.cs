@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Payroll_Library.Migrations
 {
     /// <inheritdoc />
-    public partial class initmigration : Migration
+    public partial class addedmarital_status : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,7 +37,9 @@ namespace Payroll_Library.Migrations
                     last_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     date_of_birth = table.Column<DateOnly>(type: "date", nullable: false),
                     gender = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
+                    marital_status = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     age = table.Column<byte>(type: "tinyint", nullable: false),
+                    employee_image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     modified_date = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -79,11 +81,12 @@ namespace Payroll_Library.Migrations
                     attendance_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     personal_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    morning_in = table.Column<TimeOnly>(type: "time", nullable: true),
-                    morning_out = table.Column<TimeOnly>(type: "time", nullable: true),
-                    afternoon_in = table.Column<TimeOnly>(type: "time", nullable: true),
-                    afternoon_out = table.Column<TimeOnly>(type: "time", nullable: true),
-                    attendance_date = table.Column<DateOnly>(type: "date", nullable: true)
+                    morning_in = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: true),
+                    morning_out = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: true),
+                    afternoon_in = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: true),
+                    afternoon_out = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: true),
+                    attendance_date = table.Column<DateOnly>(type: "date", nullable: true),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -183,7 +186,7 @@ namespace Payroll_Library.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     personal_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     position_id = table.Column<int>(type: "int", nullable: false),
-                    hire_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    hire_date = table.Column<DateOnly>(type: "date", nullable: false),
                     pay_rate = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     philhealth_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
                     sss_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
@@ -273,7 +276,8 @@ namespace Payroll_Library.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Contact_Information_personal_id",
                 table: "Contact_Information",
-                column: "personal_id");
+                column: "personal_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employee_Biometric_personal_id",
@@ -283,7 +287,8 @@ namespace Payroll_Library.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Employment_Details_personal_id",
                 table: "Employment_Details",
-                column: "personal_id");
+                column: "personal_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employment_Details_position_id",
@@ -293,7 +298,8 @@ namespace Payroll_Library.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Gross_Salaries_payroll_id",
                 table: "Gross_Salaries",
-                column: "payroll_id");
+                column: "payroll_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Leave_personal_id",
@@ -303,7 +309,8 @@ namespace Payroll_Library.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Net_Salaries_payroll_id",
                 table: "Net_Salaries",
-                column: "payroll_id");
+                column: "payroll_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payroll_personal_id",
@@ -313,7 +320,8 @@ namespace Payroll_Library.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Total_Deductions_payroll_id",
                 table: "Total_Deductions",
-                column: "payroll_id");
+                column: "payroll_id",
+                unique: true);
         }
 
         /// <inheritdoc />

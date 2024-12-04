@@ -24,6 +24,7 @@
     <Folder Include="Migrations\" />
     <Folder Include="Models\DbContext\" />
     <Folder Include="Services\Payroll\" />
+    <Folder Include="UserAuth\Dto\" />
   </ItemGroup>
 
 </Project>

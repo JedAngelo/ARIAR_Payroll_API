@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Payroll_Library.UserAuth;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace Payroll_Library.Models.Dto.UserAuthDto
 
         public string UserToken { get; set; }
         //public string newRefreshToken { get; set; }
-        public IList<string> UserRole { get; set; }
+        public IList<string>? UserRole { get; set; }
+        public List<string>? Permissions { get; set; }
     }
 }

@@ -19,14 +19,15 @@ namespace Payroll_Library.Models.Dto.EmployeeDto
         public DateOnly DateOfBirth { get; set; }
 
         public string Gender { get; set; } = null!;
+        public string MaritalStatus { get; set; } = null!;
 
         public byte Age { get; set; }
+
+        public byte[]? EmployeeImage { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
         public string CreatedBy { get; set; } = null!;
-
-
 
         public bool IsActive { get; set; }
 
