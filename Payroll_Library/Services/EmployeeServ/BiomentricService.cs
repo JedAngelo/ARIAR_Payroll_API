@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payroll_Library.Services.Employee
+namespace Payroll_Library.Services.EmployeeServ
 {
     public class BiomentricService : IBiomentricService
     {

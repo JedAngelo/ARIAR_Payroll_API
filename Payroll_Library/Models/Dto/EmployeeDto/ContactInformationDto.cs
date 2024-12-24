@@ -8,7 +8,7 @@ namespace Payroll_Library.Models.Dto.EmployeeDto
 {
     public class ContactInformationDto
     {
-            public int ContactId { get; set; }
+            public int? ContactId { get; set; }
 
             public Guid PersonalId { get; set; }
 

@@ -8,7 +8,7 @@ namespace Payroll_Library.Models.Dto.AttendanceDto
 {
     public class AttendanceDto
     {
-        public int? AttendanceId { get; set; }
+        public int AttendanceId { get; set; }
 
         public Guid PersonalId { get; set; }
 
@@ -22,8 +22,11 @@ namespace Payroll_Library.Models.Dto.AttendanceDto
 
         public DateOnly? AttendanceDate { get; set; }
 
-        public string? Status { get; set; }
+        public decimal PayMultiplier { get; set; }
 
+        public string? DayType { get; set; }
+
+        public string? Status { get; set; }
         //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Payroll_Library.Models.Dto;
 using Payroll_Library.Models.Dto.EmployeeDto;
 using Payroll_Library.Services;
-using Payroll_Library.Services.Employee;
+using Payroll_Library.Services.EmployeeServ;
 
 namespace ARIAR_Payroll_API.Controllers
 {
@@ -51,6 +51,21 @@ namespace ARIAR_Payroll_API.Controllers
         public async Task<ActionResult<ApiResponse<PersonalInformationDisplayDto>>> DisplayPersonalInfoById(Guid id)
         {
             var result = await _employeeService.DisplayPersonalInfoById(id);
+            return Ok(result);
+        }
+
+        [HttpGet("DisplayPersonalInfoRaw/{id}")]
+        public async Task<ActionResult<ApiResponse<PersonalInformationDto>>> DisplayPersonalInfoRaw(Guid id)
+        {
+            var result = await _employeeService.DisplayPersonalInfoRaw(id);
+            return Ok(result);
+        }
+
+
+        [HttpGet("DisplayPositions")]
+        public async Task<ActionResult<List<ApiResponse<PostionDto>>>> DisplayPositinos()
+        {
+            var result = await _employeeService.DisplayPositions();
             return Ok(result);
         }
 

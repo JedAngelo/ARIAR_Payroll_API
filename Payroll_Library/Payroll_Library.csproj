@@ -23,7 +23,7 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Models\DbContext\" />
-    <Folder Include="Services\Payroll\" />
+    <Folder Include="Services\PayrollServ\" />
     <Folder Include="UserAuth\Dto\" />
   </ItemGroup>
 

@@ -12,8 +12,8 @@ using Payroll_Library.Models;
 namespace Payroll_Library.Migrations
 {
     [DbContext(typeof(AriarPayrollDbContext))]
-    [Migration("20241202113459_added marital_status")]
-    partial class addedmarital_status
+    [Migration("20241224171503_major revisions")]
+    partial class majorrevisions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,10 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("date")
                         .HasColumnName("attendance_date");
 
+                    b.Property<string>("DayType")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("day_type");
+
                     b.Property<TimeOnly?>("MorningIn")
                         .HasPrecision(0)
                         .HasColumnType("time(0)")
@@ -57,6 +61,12 @@ namespace Payroll_Library.Migrations
                         .HasPrecision(0)
                         .HasColumnType("time(0)")
                         .HasColumnName("morning_out");
+
+                    b.Property<decimal>("PayMultiplier")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(5,2)")
+                        .HasDefaultValue(1m)
+                        .HasColumnName("pay_multiplier");
 
                     b.Property<Guid>("PersonalId")
                         .HasColumnType("uniqueidentifier")
@@ -197,12 +207,10 @@ namespace Payroll_Library.Migrations
                         .HasColumnName("hire_date");
 
                     b.Property<decimal>("IncomeTaxRate")
-                        .HasColumnType("decimal(5, 2)")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10, 2)")
+                        .HasDefaultValue(0m)
                         .HasColumnName("income_tax_rate");
-
-                    b.Property<decimal>("PagibigEmployeeRate")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("pagibig_employee_rate");
 
                     b.Property<decimal>("PayRate")
                         .HasColumnType("decimal(10, 2)")
@@ -212,17 +220,9 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("personal_id");
 
-                    b.Property<decimal>("PhilhealthEmployeeRate")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("philhealth_employee_rate");
-
                     b.Property<int>("PositionId")
                         .HasColumnType("int")
                         .HasColumnName("position_id");
-
-                    b.Property<decimal>("SssEmployeeRate")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("sss_employee_rate");
 
                     b.HasKey("EmploymentId")
                         .HasName("PK__Employme__63C1606468BACA47");
@@ -233,32 +233,6 @@ namespace Payroll_Library.Migrations
                     b.HasIndex(new[] { "PositionId" }, "IX_Employment_Details_position_id");
 
                     b.ToTable("Employment_Details", (string)null);
-                });
-
-            modelBuilder.Entity("Payroll_Library.Models.GrossSalary", b =>
-                {
-                    b.Property<int>("SalaryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("salary_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SalaryId"));
-
-                    b.Property<decimal>("GrossSalaryAmount")
-                        .HasColumnType("decimal(10, 2)")
-                        .HasColumnName("gross_salary_amount");
-
-                    b.Property<Guid>("PayrollId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("payroll_id");
-
-                    b.HasKey("SalaryId")
-                        .HasName("PK__Gross_Sa__A3C71C513EA2B2C1");
-
-                    b.HasIndex(new[] { "PayrollId" }, "IX_Gross_Salaries_payroll_id")
-                        .IsUnique();
-
-                    b.ToTable("Gross_Salaries", (string)null);
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.Leave", b =>
@@ -290,45 +264,63 @@ namespace Payroll_Library.Migrations
                     b.ToTable("Leave", (string)null);
                 });
 
-            modelBuilder.Entity("Payroll_Library.Models.NetSalary", b =>
-                {
-                    b.Property<int>("NetSalaryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("net_salary_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NetSalaryId"));
-
-                    b.Property<decimal>("NetSalaryAmount")
-                        .HasColumnType("decimal(10, 2)")
-                        .HasColumnName("net_salary_amount");
-
-                    b.Property<Guid>("PayrollId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("payroll_id");
-
-                    b.HasKey("NetSalaryId")
-                        .HasName("PK__Net_Sala__6C719F7AC24E5CEE");
-
-                    b.HasIndex(new[] { "PayrollId" }, "IX_Net_Salaries_payroll_id")
-                        .IsUnique();
-
-                    b.ToTable("Net_Salaries", (string)null);
-                });
-
             modelBuilder.Entity("Payroll_Library.Models.Payroll", b =>
                 {
                     b.Property<Guid>("PayrollId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("payroll_id");
 
-                    b.Property<DateOnly>("PaymentDate")
+                    b.Property<decimal>("Commissions")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("commissions");
+
+                    b.Property<decimal>("EmployeePagibigShare")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("employee_pagibig_share");
+
+                    b.Property<decimal>("EmployeePhilhealthShare")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("employee_philhealth_share");
+
+                    b.Property<decimal>("EmployeeSssShare")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("employee_sss_share");
+
+                    b.Property<decimal>("EmployerPagibigShare")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("employer_pagibig_share");
+
+                    b.Property<decimal>("EmployerPhilhealthShare")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("employer_philhealth_share");
+
+                    b.Property<decimal>("EmployerSssShare")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("employer_sss_share");
+
+                    b.Property<DateOnly>("EndDate")
                         .HasColumnType("date")
-                        .HasColumnName("payment_date");
+                        .HasColumnName("end_date");
+
+                    b.Property<decimal>("GrossSalary")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("gross_salary");
+
+                    b.Property<decimal>("NetSalary")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("net_salary");
+
+                    b.Property<decimal>("OtherDeductions")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("other_deductions");
 
                     b.Property<Guid>("PersonalId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("personal_id");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("start_date");
 
                     b.Property<decimal>("TotalWorkDay")
                         .HasColumnType("decimal(5, 2)")
@@ -432,6 +424,13 @@ namespace Payroll_Library.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("modified_date");
 
+                    b.Property<string>("Suffix")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("suffix");
+
                     b.HasKey("PersonalId");
 
                     b.ToTable("Personal_Information", (string)null);
@@ -494,42 +493,91 @@ namespace Payroll_Library.Migrations
                     b.ToTable("Position", (string)null);
                 });
 
-            modelBuilder.Entity("Payroll_Library.Models.TotalDeduction", b =>
+            modelBuilder.Entity("Payroll_Library.Models.SssMonthlyCredit", b =>
                 {
-                    b.Property<int>("TotalDeductionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("total_deduction_id");
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TotalDeductionId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("IncomeTaxDeductionAmount")
+                    b.Property<decimal>("EmployeeShare")
+                        .HasColumnType("decimal(10,5)")
+                        .HasColumnName("employee_share");
+
+                    b.Property<decimal>("EmployerShare")
+                        .HasColumnType("decimal(10,5)")
+                        .HasColumnName("employer_share");
+
+                    b.Property<decimal>("LowerLimit")
+                        .HasColumnType("decimal(10,5)")
+                        .HasColumnName("lower_limit");
+
+                    b.Property<decimal>("MonthlySalaryCredit")
+                        .HasColumnType("decimal(10,5)")
+                        .HasColumnName("monthly_salary_credit");
+
+                    b.Property<decimal>("UpperLimit")
+                        .HasColumnType("decimal(10,5)")
+                        .HasColumnName("upper_limit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SSS_Monthly_Credit", (string)null);
+                });
+
+            modelBuilder.Entity("Payroll_Library.Models.SystemSettings", b =>
+                {
+                    b.Property<int>("SettingsId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("income_tax_deduction_amount");
+                        .HasColumnName("settings_id");
 
-                    b.Property<int>("PagibigDeductionAmount")
-                        .HasColumnType("int")
-                        .HasColumnName("pagibig_deduction_amount");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SettingsId"));
 
-                    b.Property<Guid>("PayrollId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("payroll_id");
+                    b.Property<string>("AttendanceType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("attendance_type");
 
-                    b.Property<int>("PhilhealthDeductionAmount")
-                        .HasColumnType("int")
-                        .HasColumnName("philhealth_deduction_amount");
+                    b.Property<TimeOnly>("EarlyOutEndsAfternoon")
+                        .HasColumnType("time")
+                        .HasColumnName("early_out_ends_afternoon");
 
-                    b.Property<int>("SssDeductionAmount")
-                        .HasColumnType("int")
-                        .HasColumnName("sss_deduction_amount");
+                    b.Property<TimeOnly>("EarlyOutEndsMorning")
+                        .HasColumnType("time")
+                        .HasColumnName("early_out_ends_morning");
 
-                    b.HasKey("TotalDeductionId")
-                        .HasName("PK__Total_De__9AF15027D43CBC2C");
+                    b.Property<decimal>("EmployerPagibigRate")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("employer_pagibig_rate");
 
-                    b.HasIndex(new[] { "PayrollId" }, "IX_Total_Deductions_payroll_id")
-                        .IsUnique();
+                    b.Property<decimal>("EmployerPhilhealthRate")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("employer_philhealth_rate");
 
-                    b.ToTable("Total_Deductions", (string)null);
+                    b.Property<decimal>("EmployerSssRate")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("employer_sss_rate");
+
+                    b.Property<TimeOnly>("LateStartTimeAfternoon")
+                        .HasColumnType("time")
+                        .HasColumnName("late_start_time_afternoon");
+
+                    b.Property<TimeOnly>("LateStartTimeMorning")
+                        .HasColumnType("time")
+                        .HasColumnName("late_start_time_morning");
+
+                    b.Property<bool>("PasswordlessManualAttendance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("passwordless_manual_attendance");
+
+                    b.HasKey("SettingsId");
+
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.Attendance", b =>
@@ -584,17 +632,6 @@ namespace Payroll_Library.Migrations
                     b.Navigation("Position");
                 });
 
-            modelBuilder.Entity("Payroll_Library.Models.GrossSalary", b =>
-                {
-                    b.HasOne("Payroll_Library.Models.Payroll", "Payroll")
-                        .WithOne("GrossSalary")
-                        .HasForeignKey("Payroll_Library.Models.GrossSalary", "PayrollId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Gross_Salaries_Payroll");
-
-                    b.Navigation("Payroll");
-                });
-
             modelBuilder.Entity("Payroll_Library.Models.Leave", b =>
                 {
                     b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
@@ -606,17 +643,6 @@ namespace Payroll_Library.Migrations
                     b.Navigation("Personal");
                 });
 
-            modelBuilder.Entity("Payroll_Library.Models.NetSalary", b =>
-                {
-                    b.HasOne("Payroll_Library.Models.Payroll", "Payroll")
-                        .WithOne("NetSalary")
-                        .HasForeignKey("Payroll_Library.Models.NetSalary", "PayrollId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Net_Salaries_Payroll");
-
-                    b.Navigation("Payroll");
-                });
-
             modelBuilder.Entity("Payroll_Library.Models.Payroll", b =>
                 {
                     b.HasOne("Payroll_Library.Models.PersonalInformation", "Personal")
@@ -626,26 +652,6 @@ namespace Payroll_Library.Migrations
                         .HasConstraintName("FK_Payroll_Personal_Information");
 
                     b.Navigation("Personal");
-                });
-
-            modelBuilder.Entity("Payroll_Library.Models.TotalDeduction", b =>
-                {
-                    b.HasOne("Payroll_Library.Models.Payroll", "Payroll")
-                        .WithOne("TotalDeduction")
-                        .HasForeignKey("Payroll_Library.Models.TotalDeduction", "PayrollId")
-                        .IsRequired()
-                        .HasConstraintName("FK_Total_Deductions_Payroll");
-
-                    b.Navigation("Payroll");
-                });
-
-            modelBuilder.Entity("Payroll_Library.Models.Payroll", b =>
-                {
-                    b.Navigation("GrossSalary");
-
-                    b.Navigation("NetSalary");
-
-                    b.Navigation("TotalDeduction");
                 });
 
             modelBuilder.Entity("Payroll_Library.Models.PersonalInformation", b =>

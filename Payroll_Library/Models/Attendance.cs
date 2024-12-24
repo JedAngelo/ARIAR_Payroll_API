@@ -19,6 +19,12 @@ public partial class Attendance
 
     public DateOnly? AttendanceDate { get; set; }
 
+    public decimal PayMultiplier { get; set; }
+
+
+    //Accepted type: "NON-WORKING", "REGULAR", "REGULAR HOLIDAY"
+    public string? DayType { get; set; }
+
     public string? Status { get; set; }
 
     public virtual PersonalInformation Personal { get; set; } = null!;

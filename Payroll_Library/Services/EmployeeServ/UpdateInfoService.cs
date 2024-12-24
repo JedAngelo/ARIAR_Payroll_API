@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payroll_Library.Services.Employee
+namespace Payroll_Library.Services.EmployeeServ
 {
     public class UpdateInfoService
     {
@@ -47,7 +47,7 @@ namespace Payroll_Library.Services.Employee
                 var _contact = dto.ContactInformationDtos;
                 _existingPersonalInfo.ContactInformation = new ContactInformation
                 {
-                    ContactId = _contact.ContactId,
+                    ContactId = (int)_contact.ContactId!,
                     Address = _contact.Address,
                     Email = _contact.Email,
                     PhoneNumber = _contact.PhoneNumber
@@ -102,10 +102,9 @@ namespace Payroll_Library.Services.Employee
                 var _employmentDetails = dto.EmploymentDetailDtos;
                 _existingPersonalInfo.EmploymentDetail = new EmploymentDetail
                 {
-                    EmploymentId = _employmentDetails.EmploymentId,
+                    EmploymentId = (int)_employmentDetails.EmploymentId!,
                     HireDate = _employmentDetails.HireDate,
                     IncomeTaxRate = _employmentDetails.IncomeTaxRate,
-                    PagibigEmployeeRate = _employmentDetails.PagibigEmployeeRate,
                     PayRate = _employmentDetails.PayRate,
                     PositionId = _employmentDetails.PositionId
                 };

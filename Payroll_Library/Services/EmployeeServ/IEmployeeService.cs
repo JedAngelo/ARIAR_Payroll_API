@@ -2,7 +2,7 @@
 using Payroll_Library.Models.Dto.AttendanceDto;
 using Payroll_Library.Models.Dto.EmployeeDto;
 
-namespace Payroll_Library.Services.Employee
+namespace Payroll_Library.Services.EmployeeServ
 {
     public interface IEmployeeService
     {
@@ -11,6 +11,7 @@ namespace Payroll_Library.Services.Employee
         Task<ApiResponse<string>> DeleteEmployee(DeleteEmployeeDto dto);
         Task<ApiResponse<List<PersonalInformationDisplayDto>>> DisplayPersonalInfo();
         Task<ApiResponse<PersonalInformationDisplayDto>> DisplayPersonalInfoById(Guid id);
-
+        Task<ApiResponse<PersonalInformationDto>> DisplayPersonalInfoRaw(Guid id);
+        Task<ApiResponse<List<PostionDto>>> DisplayPositions();
     }
 }

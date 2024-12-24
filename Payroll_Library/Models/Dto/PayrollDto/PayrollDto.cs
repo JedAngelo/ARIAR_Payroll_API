@@ -8,20 +8,38 @@ namespace Payroll_Library.Models.Dto.PayrollDto
 {
     public class PayrollDto
     {
-        public Guid PayrollId { get; set; }
+        public Guid? PayrollId { get; set; }
 
         public Guid PersonalId { get; set; }
 
         public decimal TotalWorkDay { get; set; }
 
-        public DateOnly PaymentDate { get; set; }
+        public DateOnly StartDate { get; set; }
 
-        public virtual List<GrossSalaryDto> GrossSalaryDtos { get; set; } = new List<GrossSalaryDto>();
+        public DateOnly EndDate { get; set; }
 
-        public virtual List<NetSalaryDto> NetSalaryDtos { get; set; } = new List<NetSalaryDto>();
+        public decimal GrossSalary { get; set; }
+
+        public decimal NetSalary { get; set; }
+
+        public decimal EmployerSssShare { get; set; }
+
+        public decimal EmployerPagibigShare { get; set; }
+
+        public decimal EmployerPhilhealthShare { get; set; }
+
+        public decimal EmployeeSssShare { get; set; }
+
+        public decimal EmployeePagibigShare { get; set; }
+
+        public decimal EmployeePhilhealthShare { get; set; }
+
+        public decimal OtherDeductions { get; set; }
+
+        public decimal Commissions { get; set; }
+
 
         //public virtual PersonalInformationDto PersonalDtos { get; set; } = null!;
 
-        public virtual List<TotalDeductionsDto> TotalDeductionsDto { get; set; } = new List<TotalDeductionsDto>();
     }
 }

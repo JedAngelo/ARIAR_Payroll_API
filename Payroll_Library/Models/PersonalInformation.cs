@@ -13,6 +13,8 @@ public partial class PersonalInformation
 
     public string LastName { get; set; } = null!;
 
+    public string Suffix { get; set; } = null!;
+
     public DateOnly DateOfBirth { get; set; }
 
     public string Gender { get; set; } = null!;

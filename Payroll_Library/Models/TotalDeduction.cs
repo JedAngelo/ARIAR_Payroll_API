@@ -9,13 +9,17 @@ public partial class TotalDeduction
 
     public Guid PayrollId { get; set; }
 
-    public int PhilhealthDeductionAmount { get; set; }
+    public decimal PhilhealthDeductionAmount { get; set; }
 
-    public int PagibigDeductionAmount { get; set; }
+    public decimal PagibigDeductionAmount { get; set; }
 
-    public int SssDeductionAmount { get; set; }
+    public decimal SssDeductionAmount { get; set; }
 
-    public int IncomeTaxDeductionAmount { get; set; }
+    public decimal IncomeTaxDeductionAmount { get; set; }
+
+    public decimal LateDeductionAmount { get; set; }
+
+    public decimal? OtherDeductionAmount { get; set; }
 
     public virtual Payroll Payroll { get; set; } = null!;
 }

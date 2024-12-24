@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Payroll_Library.Models;
 using Payroll_Library.Services.AttendanceServ;
-using Payroll_Library.Services.Employee;
+using Payroll_Library.Services.EmployeeServ;
 using Payroll_Library.UserAuth;
 using System.Text;
 

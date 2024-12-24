@@ -14,6 +14,6 @@ namespace Payroll_Library.Models.Dto.PayrollDto
 
         public decimal NetSalaryAmount { get; set; }
 
-        public virtual Payroll Payroll { get; set; } = null!;
+        public virtual PayrollDto? PayrollDtos { get; set; } = null!;
     }
 }

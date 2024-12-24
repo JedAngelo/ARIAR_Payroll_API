@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payroll_Library.Services.Employee
+namespace Payroll_Library.Services.EmployeeServ
 {
     public class EmployeeService : IEmployeeService
     {
@@ -64,9 +64,6 @@ namespace Payroll_Library.Services.Employee
                             EmploymentId = 0,
                             HireDate = _employmentDetail.HireDate,
                             IncomeTaxRate = _employmentDetail.IncomeTaxRate,
-                            PagibigEmployeeRate = _employmentDetail.PagibigEmployeeRate,
-                            SssEmployeeRate = _employmentDetail.SssEmployeeRate,
-                            PhilhealthEmployeeRate = _employmentDetail.PhilhealthEmployeeRate,
                             PayRate = _employmentDetail.PayRate,
                             PositionId = _employmentDetail.PositionId
                         },
@@ -128,7 +125,7 @@ namespace Payroll_Library.Services.Employee
                     _existingPersonalInfo.MaritalStatus = dto.MaritalStatus;
                     _existingPersonalInfo.DateOfBirth = dto.DateOfBirth;
                     _existingPersonalInfo.ModifiedBy = dto.ModifiedBy;
-                    _existingPersonalInfo.ModifiedDate = dto.ModifiedDate;
+                    _existingPersonalInfo.ModifiedDate = DateTime.Now;
                     _existingPersonalInfo.IsActive = dto.IsActive;
                     _existingPersonalInfo.IsDeleted = false;
 
@@ -149,8 +146,8 @@ namespace Payroll_Library.Services.Employee
                     {
                         _existingEmployment!.HireDate = _newEmployment.HireDate;
                         _existingEmployment.IncomeTaxRate = _newEmployment.IncomeTaxRate;
-                        _existingEmployment.PagibigEmployeeRate = _newEmployment.PagibigEmployeeRate;
                         _existingEmployment.PayRate = _newEmployment.PayRate;
+                        _existingEmployment.PositionId = _newEmployment.PositionId;
                     }
 
 
@@ -177,41 +174,7 @@ namespace Payroll_Library.Services.Employee
             }
         }
 
-        public async Task<ApiResponse<string>> AddPosition(PostionDto dto)
-        {
-            try
-            {
-                var _position = new Position
-                {
-                    PositionId = 0,
-                    PositionName = dto.PositionName,
-                    CreatedBy = dto.PositionName,
-                    CreatedDate = DateTime.Now,
-                    IsDeleted = false,
-
-
-                };
-                await _context.AddAsync(_position);
-                await _context.SaveChangesAsync();
-
-                return new ApiResponse<string>
-                {
-                    Data = "Position Added",
-                    ErrorMessage = "",
-                    IsSuccess = true
-                };
-            }
-            catch (Exception ex)
-            {
-
-                return new ApiResponse<string>
-                {
-                    Data = "Failed adding position",
-                    ErrorMessage = $"Error: {ex.Message}",
-                    IsSuccess = false,
-                };
-            }
-        }
+        
 
         public async Task<ApiResponse<string>> DeleteEmployee(DeleteEmployeeDto dto)
         {
@@ -278,17 +241,14 @@ namespace Payroll_Library.Services.Employee
                                               Gender = x.Gender,
                                               MaritalStatus = x.MaritalStatus,
                                               EmployeeImage = x.EmployeeImage,
-                                              PhoneNumber = x.ContactInformation.PhoneNumber,
+                                              PhoneNumber = x.ContactInformation!.PhoneNumber,
                                               Address = x.ContactInformation.Address,
                                               Email = x.ContactInformation.Email,
-                                              HireDate = x.EmploymentDetail.HireDate,
+                                              HireDate = x.EmploymentDetail!.HireDate,
                                               PayRate = x.EmploymentDetail.PayRate,
                                               IncomeTaxRate = x.EmploymentDetail.IncomeTaxRate,
-                                              SssEmployeeRate = x.EmploymentDetail.SssEmployeeRate,
-                                              PagibigEmployeeRate = x.EmploymentDetail.PagibigEmployeeRate,
-                                              PhilhealthEmployeeRate = x.EmploymentDetail.PhilhealthEmployeeRate,
                                               PositionId = x.EmploymentDetail.PositionId,
-                                              PositionName = x.EmploymentDetail.Position.PositionName                                            
+                                              PositionName = x.EmploymentDetail.Position!.PositionName                                            
                                           }).ToListAsync();
 
                 return new ApiResponse<List<PersonalInformationDisplayDto>>
@@ -337,11 +297,8 @@ namespace Payroll_Library.Services.Employee
                                               HireDate = x.EmploymentDetail!.HireDate,
                                               PayRate = x.EmploymentDetail.PayRate,
                                               IncomeTaxRate = x.EmploymentDetail.IncomeTaxRate,
-                                              SssEmployeeRate = x.EmploymentDetail.SssEmployeeRate,
-                                              PagibigEmployeeRate = x.EmploymentDetail.PagibigEmployeeRate,
-                                              PhilhealthEmployeeRate = x.EmploymentDetail.PhilhealthEmployeeRate,
                                               PositionId = x.EmploymentDetail.PositionId,
-                                              PositionName = x.EmploymentDetail.Position.PositionName
+                                              PositionName = x.EmploymentDetail.Position!.PositionName
                                           }).FirstOrDefaultAsync();
 
                 if (_personalInfo != null)
@@ -374,5 +331,150 @@ namespace Payroll_Library.Services.Employee
             }
         }
 
+
+        public async Task<ApiResponse<PersonalInformationDto>> DisplayPersonalInfoRaw(Guid id)
+        {
+            try
+            {
+                var _personalInfo = await _context.PersonalInformations
+                                          .Where(p => p.PersonalId == id)
+                                          .Include(c => c.ContactInformation)
+                                          .Include(e => e.EmploymentDetail)
+                                          .Include(p => p.EmploymentDetail!.Position)
+                                          .Select(x => new PersonalInformationDto
+                                          {
+                                              PersonalId = x.PersonalId,
+                                              FirstName = x.FirstName,
+                                              MiddleName = x.MiddleName,
+                                              LastName = x.LastName,
+                                              Age = x.Age,
+                                              DateOfBirth = x.DateOfBirth,
+                                              Gender = x.Gender,
+                                              EmployeeImage = x.EmployeeImage,
+
+                                              ContactInformationDtos = new ContactInformationDto
+                                              {
+                                                  ContactId = x.ContactInformation!.ContactId,
+                                                  Address = x.ContactInformation!.Address,
+                                                  Email = x.ContactInformation!.Email,
+                                                  PhoneNumber = x.ContactInformation!.PhoneNumber
+                                              },
+
+                                              EmploymentDetailDtos = new EmploymentDetailDto
+                                              {
+                                                  EmploymentId = x.EmploymentDetail!.EmploymentId,
+                                                  HireDate = x.EmploymentDetail!.HireDate,
+                                                  IncomeTaxRate = x.EmploymentDetail.IncomeTaxRate,
+                                                  PayRate = x.EmploymentDetail.PayRate,
+                                                  PositionId = x.EmploymentDetail.PositionId,                                                  
+                                              },
+
+                                              CreatedBy = x.CreatedBy,
+                                              CreatedDate = x.CreatedDate,
+                                              MaritalStatus = x.MaritalStatus,
+                                              IsActive = x.IsActive                                         
+                                                                                            
+
+                                          }).FirstOrDefaultAsync();
+
+
+                return _personalInfo == null
+                                        ? throw new Exception("Employee information is null")
+                                        : new ApiResponse<PersonalInformationDto>
+                                        {
+                                            Data = _personalInfo!,
+                                            ErrorMessage = "",
+                                            IsSuccess = true
+                                        };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<PersonalInformationDto>
+                {
+                    Data = null!,
+                    ErrorMessage = $"Error: {ex.Message}",
+                    IsSuccess = false
+                };
+                throw;
+            }
+        }
+
+
+
+
+        #region Position
+
+        public async Task<ApiResponse<string>> AddPosition(PostionDto dto)
+        {
+            try
+            {
+                var _position = new Position
+                {
+                    PositionId = 0,
+                    PositionName = dto.PositionName,
+                    CreatedBy = dto.PositionName,
+                    CreatedDate = DateTime.Now,
+                    IsDeleted = false,
+
+
+                };
+                await _context.AddAsync(_position);
+                await _context.SaveChangesAsync();
+
+                return new ApiResponse<string>
+                {
+                    Data = "Position Added",
+                    ErrorMessage = "",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new ApiResponse<string>
+                {
+                    Data = "Failed adding position",
+                    ErrorMessage = $"Error: {ex.Message}",
+                    IsSuccess = false,
+                };
+            }
+        }
+
+        public async Task<ApiResponse<List<PostionDto>>> DisplayPositions()
+        {
+            try
+            {
+                var _positions = await _context.Positions.Select(x => new PostionDto
+                {
+                    PositionId = x.PositionId,
+                    PositionName = x.PositionName,
+                    IsDeleted = x.IsDeleted,
+                }).ToListAsync();
+
+                //null check using discard syntax
+                _ = _positions ?? throw new ArgumentNullException(nameof(_positions), "Positions array cannot be null.");
+
+
+                return new ApiResponse<List<PostionDto>>
+                {
+                    Data = _positions,
+                    ErrorMessage = "",
+                    IsSuccess = true
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<List<PostionDto>>
+                {
+                    Data = [],
+                    ErrorMessage = ex.Message,
+                    IsSuccess = false
+                };
+            }
+        }
+
+
+        #endregion
     }
 }

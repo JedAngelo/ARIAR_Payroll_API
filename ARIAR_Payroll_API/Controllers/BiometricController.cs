@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Payroll_Library.Models.Dto;
 using Payroll_Library.Models.Dto.EmployeeDto;
-using Payroll_Library.Services.Employee;
+using Payroll_Library.Services.EmployeeServ;
 
 namespace ARIAR_Payroll_API.Controllers
 {

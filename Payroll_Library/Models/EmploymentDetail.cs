@@ -15,12 +15,6 @@ public partial class EmploymentDetail
 
     public decimal PayRate { get; set; }
 
-    public decimal PhilhealthEmployeeRate { get; set; }
-
-    public decimal SssEmployeeRate { get; set; }
-
-    public decimal PagibigEmployeeRate { get; set; }
-
     public decimal IncomeTaxRate { get; set; }
 
     public virtual PersonalInformation Personal { get; set; } = null!;

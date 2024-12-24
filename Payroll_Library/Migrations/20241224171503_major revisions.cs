@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Payroll_Library.Migrations
 {
     /// <inheritdoc />
-    public partial class addedmarital_status : Migration
+    public partial class majorrevisions : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,6 +35,7 @@ namespace Payroll_Library.Migrations
                     first_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     middle_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     last_name = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
+                    suffix = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     date_of_birth = table.Column<DateOnly>(type: "date", nullable: false),
                     gender = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: false),
                     marital_status = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
@@ -75,6 +76,44 @@ namespace Payroll_Library.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Settings",
+                columns: table => new
+                {
+                    settings_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    employer_sss_rate = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employer_philhealth_rate = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employer_pagibig_rate = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    attendance_type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    passwordless_manual_attendance = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    late_start_time_morning = table.Column<TimeOnly>(type: "time", nullable: false),
+                    late_start_time_afternoon = table.Column<TimeOnly>(type: "time", nullable: false),
+                    early_out_ends_morning = table.Column<TimeOnly>(type: "time", nullable: false),
+                    early_out_ends_afternoon = table.Column<TimeOnly>(type: "time", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Settings", x => x.settings_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SSS_Monthly_Credit",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    lower_limit = table.Column<decimal>(type: "decimal(10,5)", nullable: false),
+                    upper_limit = table.Column<decimal>(type: "decimal(10,5)", nullable: false),
+                    monthly_salary_credit = table.Column<decimal>(type: "decimal(10,5)", nullable: false),
+                    employee_share = table.Column<decimal>(type: "decimal(10,5)", nullable: false),
+                    employer_share = table.Column<decimal>(type: "decimal(10,5)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SSS_Monthly_Credit", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Attendance",
                 columns: table => new
                 {
@@ -86,6 +125,8 @@ namespace Payroll_Library.Migrations
                     afternoon_in = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: true),
                     afternoon_out = table.Column<TimeOnly>(type: "time(0)", precision: 0, nullable: true),
                     attendance_date = table.Column<DateOnly>(type: "date", nullable: true),
+                    pay_multiplier = table.Column<decimal>(type: "decimal(5,2)", nullable: false, defaultValue: 1m),
+                    day_type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -166,7 +207,18 @@ namespace Payroll_Library.Migrations
                     payroll_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     personal_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     total_work_day = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
-                    payment_date = table.Column<DateOnly>(type: "date", nullable: false)
+                    start_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    end_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    gross_salary = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    net_salary = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employer_sss_share = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employer_pagibig_share = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employer_philhealth_share = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employee_sss_share = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employee_pagibig_share = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    employee_philhealth_share = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    other_deductions = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    commissions = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -188,10 +240,7 @@ namespace Payroll_Library.Migrations
                     position_id = table.Column<int>(type: "int", nullable: false),
                     hire_date = table.Column<DateOnly>(type: "date", nullable: false),
                     pay_rate = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    philhealth_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
-                    sss_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
-                    pagibig_employee_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
-                    income_tax_rate = table.Column<decimal>(type: "decimal(5,2)", nullable: false)
+                    income_tax_rate = table.Column<decimal>(type: "decimal(10,2)", nullable: false, defaultValue: 0m)
                 },
                 constraints: table =>
                 {
@@ -206,66 +255,6 @@ namespace Payroll_Library.Migrations
                         column: x => x.position_id,
                         principalTable: "Position",
                         principalColumn: "position_id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Gross_Salaries",
-                columns: table => new
-                {
-                    salary_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    payroll_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    gross_salary_amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Gross_Sa__A3C71C513EA2B2C1", x => x.salary_id);
-                    table.ForeignKey(
-                        name: "FK_Gross_Salaries_Payroll",
-                        column: x => x.payroll_id,
-                        principalTable: "Payroll",
-                        principalColumn: "payroll_id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Net_Salaries",
-                columns: table => new
-                {
-                    net_salary_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    payroll_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    net_salary_amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Net_Sala__6C719F7AC24E5CEE", x => x.net_salary_id);
-                    table.ForeignKey(
-                        name: "FK_Net_Salaries_Payroll",
-                        column: x => x.payroll_id,
-                        principalTable: "Payroll",
-                        principalColumn: "payroll_id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Total_Deductions",
-                columns: table => new
-                {
-                    total_deduction_id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    payroll_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    philhealth_deduction_amount = table.Column<int>(type: "int", nullable: false),
-                    pagibig_deduction_amount = table.Column<int>(type: "int", nullable: false),
-                    sss_deduction_amount = table.Column<int>(type: "int", nullable: false),
-                    income_tax_deduction_amount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Total_De__9AF15027D43CBC2C", x => x.total_deduction_id);
-                    table.ForeignKey(
-                        name: "FK_Total_Deductions_Payroll",
-                        column: x => x.payroll_id,
-                        principalTable: "Payroll",
-                        principalColumn: "payroll_id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -296,32 +285,14 @@ namespace Payroll_Library.Migrations
                 column: "position_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Gross_Salaries_payroll_id",
-                table: "Gross_Salaries",
-                column: "payroll_id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Leave_personal_id",
                 table: "Leave",
                 column: "personal_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Net_Salaries_payroll_id",
-                table: "Net_Salaries",
-                column: "payroll_id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Payroll_personal_id",
                 table: "Payroll",
                 column: "personal_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Total_Deductions_payroll_id",
-                table: "Total_Deductions",
-                column: "payroll_id",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -343,22 +314,19 @@ namespace Payroll_Library.Migrations
                 name: "Employment_Details");
 
             migrationBuilder.DropTable(
-                name: "Gross_Salaries");
-
-            migrationBuilder.DropTable(
                 name: "Leave");
 
             migrationBuilder.DropTable(
-                name: "Net_Salaries");
+                name: "Payroll");
 
             migrationBuilder.DropTable(
-                name: "Total_Deductions");
+                name: "Settings");
+
+            migrationBuilder.DropTable(
+                name: "SSS_Monthly_Credit");
 
             migrationBuilder.DropTable(
                 name: "Position");
-
-            migrationBuilder.DropTable(
-                name: "Payroll");
 
             migrationBuilder.DropTable(
                 name: "Personal_Information");

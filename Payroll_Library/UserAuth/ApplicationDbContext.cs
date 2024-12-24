@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Payroll_Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +25,8 @@ namespace Payroll_Library.UserAuth
             {
                 optionsBuilder.UseSqlServer("DefaultCon");
             }
+
+
         }
     }
 }

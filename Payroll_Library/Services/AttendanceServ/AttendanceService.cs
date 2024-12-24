@@ -27,121 +27,113 @@ namespace Payroll_Library.Services.AttendanceServ
         {
             try
             {
-                var halfDay = "HALF DAY";
-                var fullDay = "FULL DAY";
-                var leave = "LEAVE";
-
                 var _apiSuccessMessage = "";
                 var _apiErrorMessage = "";
-
                 var _apiSuccess = false;
+                var _settings = await _context.SystemSettings.FirstOrDefaultAsync(x => x.SettingsId == 1);
 
-                var _currentDateLog = await _context.Attendances.AnyAsync(a => a.AttendanceDate == dto.AttendanceDate);
+
+                var _checkDateLeaves = await _context.Attendances.Where(x => x.AttendanceDate == dto.AttendanceDate && x.Status == "LEAVE").ToListAsync();
+                foreach (var onLeave in _checkDateLeaves)
+                {
+                    onLeave.MorningIn = new TimeOnly(8, 0, 0);
+                    onLeave.MorningOut = new TimeOnly(12, 0, 0);
+                    onLeave.AfternoonIn = new TimeOnly(13, 0, 0);
+                    onLeave.AfternoonOut = new TimeOnly(17, 0, 0);
+
+                    onLeave.DayType = dto.DayType;
+                    onLeave.PayMultiplier = dto.PayMultiplier;
+                }
+                var employeeIdsOnLeave = _checkDateLeaves.Select(l => l.PersonalId).ToList();
+
+                var _currentDateLog = await _context.Attendances.AnyAsync(a => a.AttendanceDate == dto.AttendanceDate && (a.MorningIn == null && a.AfternoonIn == null && a.MorningOut == null && a.AfternoonOut == null) && !employeeIdsOnLeave.Contains(a.PersonalId));
                 if (!_currentDateLog)
                 {
-                    var employees = await _context.PersonalInformations.ToListAsync();
+                    var employees = await _context.PersonalInformations.Where(e => !employeeIdsOnLeave.Contains(e.PersonalId)).ToListAsync();
                     foreach (var employee in employees)
                     {
                         var _initAttendance = new Attendance
                         {
                             PersonalId = employee.PersonalId,
-                            AttendanceDate = dto.AttendanceDate
+                            AttendanceDate = dto.AttendanceDate,
+                            DayType = dto.DayType,
+                            PayMultiplier = dto.PayMultiplier,
+                            Status = "ABSENT"
                         };
                         await _context.Attendances.AddAsync(_initAttendance);
                     }
                     await _context.SaveChangesAsync();
                 }
 
-                if (dto.MorningIn != null)
+                if (_settings!.AttendanceType == "FULL")
                 {
-                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(a => a.MorningIn == null && a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate);
-                    
-                    if (_existingLog == null)
-                    {
-                        _apiErrorMessage = "Invalid time in, you already have a time in data";
-                    }
-                    else
-                    {
-                        _existingLog.MorningIn = dto.MorningIn;
+                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(x => x.PersonalId == dto.PersonalId && x.AttendanceDate == dto.AttendanceDate);
 
-                        await _context.SaveChangesAsync();
-                        _apiSuccessMessage = "Log morning in";
-                        _apiSuccess = true;
-                    }
-                }
-                if (dto.AfternoonIn != null)
-                {
-                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(a => a.MorningIn == null || a.AfternoonIn == null && a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate);
-                    
-                    if (_existingLog == null)
-                    {
-                        _apiErrorMessage = "Invalid time in, you already have time in data";
-                    }
-                    else
-                    {
-                        _existingLog.AfternoonIn = dto.AfternoonIn;
-
-                        await _context.SaveChangesAsync();
-                        _apiSuccessMessage = "Log afternoon in";
-                        _apiSuccess = true;
-                    }
-                }
-                if (dto.MorningOut != null)
-                {
-                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(a => a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate && a.MorningOut == null);
                     if (_existingLog != null)
                     {
-                        _existingLog.MorningOut = dto.MorningOut;
-                        _existingLog.Status = halfDay;
+
+                        if (dto.MorningIn != null && _existingLog.MorningIn == null)
+                        {
+                            _existingLog.MorningIn = dto.MorningIn;
+                            _existingLog.Status = "TIME IN(AM)";
+                        }
+
+                        if (dto.MorningOut != null && _existingLog.MorningOut == null)
+                        {
+                            _existingLog.MorningOut = dto.MorningOut;
+                            _existingLog.Status = "TIME OUT(AM)";
+                        }
+
+                        if (dto.AfternoonIn != null && _existingLog.AfternoonIn == null)
+                        {
+                            _existingLog.AfternoonIn = dto.AfternoonIn;
+                            _existingLog.Status = "TIME IN(PM)";
+                        }
+
+                        if (dto.AfternoonOut != null && _existingLog.AfternoonOut == null)
+                        {
+                            _existingLog.AfternoonOut = dto.AfternoonOut;
+                            _existingLog.Status = "TIME OUT(PM)";
+                        }
+
                         await _context.SaveChangesAsync();
-                        _apiSuccessMessage = "Log morning out, logged as half day";
-                        _apiSuccess = true;
-                    }
-                    else
-                    {
-                        _apiErrorMessage = "Invalid log out, you already logged out";
                     }
                 }
-                if (dto.AfternoonOut != null)
+                if (_settings!.AttendanceType == "IN/OUT")
                 {
-                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(a => a.PersonalId == dto.PersonalId && a.AttendanceDate == dto.AttendanceDate && a.MorningOut == null && a.AfternoonOut == null);
+                    var _existingLog = await _context.Attendances.FirstOrDefaultAsync(x => x.PersonalId == dto.PersonalId && x.AttendanceDate == dto.AttendanceDate);
+
                     if (_existingLog != null)
                     {
-                        _existingLog.AfternoonOut = dto.AfternoonOut;
-                        _existingLog.Status = fullDay;
-                        _context.Attendances.Update(_existingLog);
+
+                        if (dto.MorningIn != null && _existingLog.MorningIn == null)
+                        {
+                            _existingLog.MorningIn = dto.MorningIn;
+                            _existingLog.Status = "IN";
+                        }
+
+                        if (dto.MorningOut != null && _existingLog.MorningOut == null)
+                        {
+                            _existingLog.MorningOut = dto.MorningOut;
+                            _existingLog.Status = "OUT";
+                        }
+
+                        if (dto.AfternoonIn != null && _existingLog.AfternoonIn == null)
+                        {
+                            _existingLog.AfternoonIn = dto.AfternoonIn;
+                            _existingLog.Status = "IN";
+                        }
+
+                        if (dto.AfternoonOut != null && _existingLog.AfternoonOut == null)
+                        {
+                            _existingLog.AfternoonOut = dto.AfternoonOut;
+                            _existingLog.Status = "OUT";
+                        }
+
                         await _context.SaveChangesAsync();
-                        if (_existingLog.MorningIn != null)
-                        {
-                            _apiSuccessMessage = "Log afternoon out, logged as full day";
-                        }
-                        else
-                        {
-                            _apiSuccessMessage = "Log afternoon out, logged as half day";
-                        }
-                        _apiSuccess = true;
-                    }
-                    else
-                    {
-                        _apiErrorMessage = "Invalid log out, you already logged out";
                     }
                 }
-                if (dto.Status == leave)
-                {
-                    var _leaveAttendance = new Attendance
-                    {
-                        AttendanceId = 0,
-                        PersonalId = dto.PersonalId,
-                        AttendanceDate = dto.AttendanceDate,
-                        Status = leave
-                    };
 
-                    await _context.Attendances.AddAsync(_leaveAttendance);
-                    await _context.SaveChangesAsync();
-
-                    _apiSuccessMessage = "Logged as on leave";
-                    _apiSuccess = true;
-                }
 
                 return new ApiResponse<string>
                 {
@@ -295,8 +287,8 @@ namespace Payroll_Library.Services.AttendanceServ
                 var _counts = new LogCountDto
                 {
                     PresentCount = _attendanceData.Count(x => x.Status == "FULL DAY" || x.Status == "HALF DAY"),
-                    AbsentCount = _attendanceData.Count(x => x.Status == null && _currentDate > x.AttendanceDate),
-                    LeaveCount = _attendanceData.Count(x => x.Status == "ON LEAVE")
+                    AbsentCount = _attendanceData.Count(x => x.Status == "ABSENT"),
+                    LeaveCount = _attendanceData.Count(x => x.Status == "LEAVE")
                 };
 
                 return new ApiResponse<LogCountDto>
