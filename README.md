@@ -142,3 +142,8 @@ Once the API is running, you can explore the available endpoints using the integ
 *   **Swagger UI (Development):** `https://localhost:7144/swagger` (or your configured HTTPS/HTTP URL + `/swagger`)
 
 Example Base URL for the client application: `http://localhost:5292` or `https://localhost:7144`.
+
+
+## License
+
+This project is licensed under the [MIT License](LICENSE)
